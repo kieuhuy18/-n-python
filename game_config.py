@@ -9,7 +9,6 @@ FPS = 60
 
 BLACK = (0, 0, 0)
 
-
 #  Spritesheet images and coordinates
 SPAWN_STAR = {"star_0": [(spriteSize * 16), (spriteSize * 6), spriteSize, spriteSize],
               "star_1": [(spriteSize * 17), (spriteSize * 6), spriteSize, spriteSize],
@@ -41,20 +40,20 @@ BULLETS = {"Up": [(spriteSize * 20), (spriteSize * 6) + 4, 8, 8],
            "Down": [(spriteSize * 21), (spriteSize * 6) + 4, 8, 8],
            "Right": [(spriteSize * 21) + 8, (spriteSize * 6) + 4, 8, 8]}
 MAP_TILES = {
-    #  Bricks
-    432: {"small": [spriteSize * 16, spriteSize * 4, 8, 8],
+    #  432
+    "bricks": {"small": [spriteSize * 16, spriteSize * 4, 8, 8],
           "small_right": [(spriteSize * 16) + 12, spriteSize * 4, 4, 8],
           "small_bot": [spriteSize * 17, (spriteSize * 4) + 4, 8, 4],
           "small_left": [(spriteSize * 17) + 8, spriteSize * 4, 4, 8],
           "small_top": [(spriteSize * 18), spriteSize * 4, 8, 4]},
-    #  Steel
-    482: {"small": [spriteSize * 16, (spriteSize * 4) + 8, 8, 8]},
-    #  Forest
-    483: {"small": [(spriteSize * 16) + 8, (spriteSize * 4) + 8, 8, 8]},
-    #  Ice
-    484: {"small": [(spriteSize * 17), (spriteSize * 4) + 8, 8, 8]},
-    #  Water
-    533: {"small_1": [(spriteSize * 16) + 8, (spriteSize * 5), 8, 8],
+    #  482
+    "steel": {"small": [spriteSize * 16, (spriteSize * 4) + 8, 8, 8]},
+    #  483
+    "forest": {"small": [(spriteSize * 16) + 8, (spriteSize * 4) + 8, 8, 8]},
+    #  484
+    "ice": {"small": [(spriteSize * 17), (spriteSize * 4) + 8, 8, 8]},
+    #  533
+    "water": {"small_1": [(spriteSize * 16) + 8, (spriteSize * 5), 8, 8],
           "small_2": [(spriteSize * 17), (spriteSize * 5), 8, 8]}
 }
 HUD_INFO = {"stage":    [(16 * 20) + 8, (16 * 11), 40, 8],
