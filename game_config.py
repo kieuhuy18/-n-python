@@ -9,6 +9,8 @@ FPS = 60
 
 BLACK = (0, 0, 0)
 
+Tank_speed = imageSize // spriteSize
+
 #  Spritesheet images and coordinates
 SPAWN_STAR = {"star_0": [(spriteSize * 16), (spriteSize * 6), spriteSize, spriteSize],
               "star_1": [(spriteSize * 17), (spriteSize * 6), spriteSize, spriteSize],

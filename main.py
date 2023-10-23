@@ -30,6 +30,7 @@ class MainGame:
     def input(self): 
         if self.game_on:
             self.game.input()
+            
         if not self.game_on:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
