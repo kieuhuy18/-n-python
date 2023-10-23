@@ -18,14 +18,18 @@ class Tank(pygame.sprite.Sprite):
 
         #  Tank Images
         self.tank_image = self.assets.tank_image
+        self.spawn_images = self.assets.spawn_star_images
 
         #  Tank Position and Direction
         self.spawn_pos = position
         self.xPos, self.yPos = self.spawn_pos
         self.direction = direction
 
+        #Tank Spawning/ Active
+        self.active = False
+        self.spawning = True
+
         #  Common Tank Attributes
-        self.active = True
         self.tank_level = tank_level
         self.colour = colour
         self.tank_speed =gc.Tank_speed
@@ -37,18 +41,36 @@ class Tank(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(self.spawn_pos))
         #Note ^
 
+        #spawn images
+        self.spawn_image = self.spawn_images[f"star_{self.frame_index}"]
+        self.spawn_time = pygame.time.get_ticks()
+        self.spawn_ani_time = pygame.time.get_ticks()
+
     def input(self):
         pass
 
     def update(self):
-        pass
+        if self.spawning:
+            if pygame.time.get_ticks() - self.spawn_ani_time >= 50:
+                self.spawn_animation()
+            if pygame.time.get_ticks() - self.spawn_time > 2000:
+                self.frame_index = 0
+                self.spawning = False
+                self.active = True
+        return
 
     def draw(self, window):
+        if self.spawning:
+            window.blit(self.spawn_image, self.rect)
         #  If the tank is set to active, draw to screen
         if self.active:
             window.blit(self.image, self.rect)
+            pygame.draw.rect(window, gc.RED, self.rect, 1)
     
     def move_tank(self, direction):
+        if self.spawning:
+            return
+        self.direction = direction
         if direction == "Up":
             self.yPos -= self.tank_speed
         elif direction == "Down":
@@ -60,29 +82,67 @@ class Tank(pygame.sprite.Sprite):
 
         #Note:
         self.rect.topleft = (self.xPos, self.yPos)
+        self.tank_move_animation()
+        self.tank_collision()
+
+    def tank_move_animation(self):
+        self.frame_index += 1
+        self.frame_index = self.frame_index % 2
+        self.image = self.tank_image[f"Tank_{self.tank_level}"][self.colour][self.direction][self.frame_index]  
+
+    def spawn_animation(self):
+        self.frame_index += 1
+        self.frame_index = self.frame_index % 4
+        self.spawn_image = self.spawn_images[f"star_{self.frame_index}"]
+        spawn_anim_timer = pygame.time.get_ticks()
+
+
+    def tank_collision(self):    
+        tank_coll = pygame.sprite.spritecollide(self, self.tank_group, False) #Hàm trả về danh sách các sprite xung đột, luôn có 1 tank trong này
+        if len(tank_coll) == 1:
+            return
+        for tank in tank_coll:
+            if tank == self:
+                continue
+            if self.direction == "Right":
+                if self.rect.right >= tank.rect.left and self.rect.bottom > tank.rect.top and self.rect.top < tank.rect.bottom:
+                    self.rect.right = tank.rect.left
+                    self.xPos = self.rect.x
+            elif self.direction == "Left":
+                if self.rect.left <= tank.rect.right and self.rect.bottom > tank.rect.top and self.rect.top < tank.rect.bottom:
+                    self.rect.left = tank.rect.right
+                    self.xPos = self.rect.x
+            elif self.direction == "Up":
+                if self.rect.top <= tank.rect.bottom and self.rect.left < tank.rect.right and self.rect.right > tank.rect.left:
+                    self.rect.top = tank.rect.bottom
+                    self.yPos = self.rect.y
+            elif self.direction == "Down":
+                if self.rect.bottom >= tank.rect.top and self.rect.left < tank.rect.right and self.rect.right > tank.rect.left:
+                    self.rect.bottom = tank.rect.top
+                    self.yPos = self.rect.y
+
 
 class Player(Tank):
     def __init__(self, game, assets, groups, position, direction, colour, tank_level):
         super().__init__(game, assets, groups, position, direction, colour, tank_level)
 
-    def input(self, keypressed, player):
-        self.frame_index += 1
-        if player == 0:
+    def input(self, keypressed):
+        if self.colour == "Gold":
             if keypressed[pygame.K_w]:
                 self.move_tank("Up")
-            if keypressed[pygame.K_s]:
+            elif keypressed[pygame.K_s]:
                 self.move_tank("Down")
-            if keypressed[pygame.K_a]:
+            elif keypressed[pygame.K_a]:
                 self.move_tank("Left")
-            if keypressed[pygame.K_d]:
+            elif keypressed[pygame.K_d]:
                 self.move_tank("Right")
-        if player == 1:
+
+        if self.colour == "Green":
             if keypressed[pygame.K_UP]:
                 self.move_tank("Up")
-            if keypressed[pygame.K_DOWN]:
+            elif keypressed[pygame.K_DOWN]:
                 self.move_tank("Down")
-            if keypressed[pygame.K_LEFT]:
+            elif keypressed[pygame.K_LEFT]:
                 self.move_tank("Left")
-            if keypressed[pygame.K_RIGHT]:
+            elif keypressed[pygame.K_RIGHT]:
                 self.move_tank("Right")
-        self.frame_index = self.frame_index % 2

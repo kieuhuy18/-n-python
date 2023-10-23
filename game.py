@@ -14,13 +14,13 @@ class Game:
 
         #  Player Objects
         self.player1 = Player(self, self.assets, self.groups, (200, 200), "Up", "Gold", 0)
-        self.player2 = Player(self, self.assets, self.groups, (400, 200), "Up", "Green", 1)
+        self.player2 = Player(self, self.assets, self.groups, (400, 200), "Up", "Green", 0)
 
     def input(self):
         """Handle inputs for the game when it is running"""
         keypressed = pygame.key.get_pressed()
-        self.player1.input(keypressed, 0)
-        self.player2.input(keypressed, 1)
+        self.player1.input(keypressed)
+        self.player2.input(keypressed)
 
         #  pygame event handler
         for event in pygame.event.get():

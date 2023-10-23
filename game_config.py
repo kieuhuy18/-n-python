@@ -8,6 +8,7 @@ SCREENHEIGHT = 14 * imageSize
 FPS = 60
 
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
 
 Tank_speed = imageSize // spriteSize
 
