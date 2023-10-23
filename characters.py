@@ -49,13 +49,13 @@ class Tank(pygame.sprite.Sprite):
             window.blit(self.image, self.rect)
     
     def move_tank(self, direction):
-        if direction == "up":
+        if direction == "Up":
             self.yPos -= self.tank_speed
-        elif direction == "down":
+        elif direction == "Down":
             self.yPos += self.tank_speed
-        elif direction == "left":
+        elif direction == "Left":
             self.xPos -= self.tank_speed
-        elif direction == "right":
+        elif direction == "Right":
             self.xPos += self.tank_speed
 
         #Note:
@@ -65,12 +65,24 @@ class Player(Tank):
     def __init__(self, game, assets, groups, position, direction, colour, tank_level):
         super().__init__(game, assets, groups, position, direction, colour, tank_level)
 
-    def input(self, keypressed):
-        if keypressed[pygame.K_w]:
-            self.move_tank("up")
-        if keypressed[pygame.K_s]:
-            self.move_tank("down")
-        if keypressed[pygame.K_a]:
-            self.move_tank("left")
-        if keypressed[pygame.K_d]:
-            self.move_tank("right")
+    def input(self, keypressed, player):
+        self.frame_index += 1
+        if player == 0:
+            if keypressed[pygame.K_w]:
+                self.move_tank("Up")
+            if keypressed[pygame.K_s]:
+                self.move_tank("Down")
+            if keypressed[pygame.K_a]:
+                self.move_tank("Left")
+            if keypressed[pygame.K_d]:
+                self.move_tank("Right")
+        if player == 1:
+            if keypressed[pygame.K_UP]:
+                self.move_tank("Up")
+            if keypressed[pygame.K_DOWN]:
+                self.move_tank("Down")
+            if keypressed[pygame.K_LEFT]:
+                self.move_tank("Left")
+            if keypressed[pygame.K_RIGHT]:
+                self.move_tank("Right")
+        self.frame_index = self.frame_index % 2

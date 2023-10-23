@@ -19,8 +19,8 @@ class Game:
     def input(self):
         """Handle inputs for the game when it is running"""
         keypressed = pygame.key.get_pressed()
-        self.player1.input(keypressed)
-        self.player2.input(keypressed)
+        self.player1.input(keypressed, 0)
+        self.player2.input(keypressed, 1)
 
         #  pygame event handler
         for event in pygame.event.get():
