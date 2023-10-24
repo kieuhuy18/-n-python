@@ -5,10 +5,14 @@ imageSize = spriteSize * spriteScale
 SCREENWIDTH = 16 * imageSize
 SCREENHEIGHT = 14 * imageSize
 
+GAME_SCREEN = (imageSize, imageSize // 2, imageSize * 13, imageSize * 13)
+Info_x, Info_y = SCREENWIDTH - (imageSize * 2), imageSize // 2
+
 FPS = 60
 
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
+GREY = (99, 99, 99)
 
 Tank_speed = imageSize // spriteSize
 
