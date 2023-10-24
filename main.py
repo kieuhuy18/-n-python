@@ -18,7 +18,7 @@ class MainGame:
 
         #Gọi đối tượng game
         self.game_on = True
-        self.game = Game(self, self.assets)
+        self.game = Game(self, self.assets, True, True)
 
     #Hàm chạy game chính
     def run_gamme(self):
