@@ -36,7 +36,8 @@ class Tank(pygame.sprite.Sprite):
         #Note:
         self.frame_index = 0
         self.image = self.tank_images[f"Tank_{self.tank_level}"][self.colour][self.direction][self.frame_index]
-        self.rect = self.image.get_rect(topleft=(self.spawn_pos))
+        self.rect = self.image.get_rect(topleft=(self.spawn_pos)) 
+        self.width, self.height = self.image.get_size()
         #Note ^
 
         #spawn images
@@ -71,12 +72,20 @@ class Tank(pygame.sprite.Sprite):
         self.direction = direction
         if direction == "Up":
             self.yPos -= self.tank_speed
+            if self.yPos < gc.SCREEN_BORDER_TOP:
+                self.yPos = gc.SCREEN_BORDER_TOP
         elif direction == "Down":
             self.yPos += self.tank_speed
+            if self.yPos + self.height > gc.SCREEN_BORDER_BOTTOM:
+                self.yPos = gc.SCREEN_BORDER_BOTTOM - self.height
         elif direction == "Left":
             self.xPos -= self.tank_speed
+            if self.xPos < gc.SCREEN_BORDER_LEFT:
+                self.xPos = gc.SCREEN_BORDER_LEFT
         elif direction == "Right":
             self.xPos += self.tank_speed
+            if self.xPos + self.width > gc.SCREEN_BORDER_RIGHT:
+                self.xPos = gc.SCREEN_BORDER_RIGHT - self.width
 
         #Note:
         self.rect.topleft = (self.xPos, self.yPos)
