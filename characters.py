@@ -5,19 +5,17 @@ import game_config as gc
 class Tank(pygame.sprite.Sprite):
     def __init__(self, game, assets, groups, position, direction, colour="Silver", tank_level=0):
         super().__init__()
-        #  Game Object and Assets
+        #  Các thuộc tính cơ bản
         self.game = game
         self.assets = assets
         self.groups = groups
-
-        #  Sprite groups that may interact with tank
         self.tank_group = self.groups["All_Tanks"]
 
-        #  Add tank object to the sprite group
+        #  Thêm đối tượng tank vào group
         self.tank_group.add(self)
 
         #  Tank Images
-        self.tank_image = self.assets.tank_image
+        self.tank_images = self.assets.tank_image
         self.spawn_images = self.assets.spawn_star_images
 
         #  Tank Position and Direction
@@ -37,7 +35,7 @@ class Tank(pygame.sprite.Sprite):
         #  Tank Image, Rectangle, and Frame Index
         #Note:
         self.frame_index = 0
-        self.image = self.tank_image[f"Tank_{self.tank_level}"][self.colour][self.direction][self.frame_index]
+        self.image = self.tank_images[f"Tank_{self.tank_level}"][self.colour][self.direction][self.frame_index]
         self.rect = self.image.get_rect(topleft=(self.spawn_pos))
         #Note ^
 

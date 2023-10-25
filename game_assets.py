@@ -28,23 +28,23 @@ class GameAssets:
         self.tank_image = self._load_all_tank_images()
 
         # load dict chứa tọa độ của các đối tượng trên spritesheet
-        self.bullet_images = self._get_specified_images(self.spritesheet, gc.BULLETS, gc.BLACK)
-        self.shield_images = self._get_specified_images(self.spritesheet, gc.SHIELD, gc.BLACK)
-        self.spawn_star_images = self._get_specified_images(self.spritesheet, gc.SPAWN_STAR, gc.BLACK)
-        self.power_up_images = self._get_specified_images(self.spritesheet, gc.POWER_UPS, gc.BLACK)
-        self.flag = self._get_specified_images(self.spritesheet, gc.FLAG, gc.BLACK)
-        self.explosions = self._get_specified_images(self.spritesheet, gc.EXPLOSIONS, gc.BLACK)
-        self.score = self._get_specified_images(self.spritesheet, gc.SCORE, gc.BLACK)
-        self.hud_images = self._get_specified_images(self.spritesheet, gc.HUD_INFO, gc.BLACK, transparent=False)
-        self.context = self._get_specified_images(self.spritesheet, gc.CONTEXT, gc.BLACK)
+        self.bullet_images = self.get_specified_images(self.spritesheet, gc.BULLETS, gc.BLACK)
+        self.shield_images = self.get_specified_images(self.spritesheet, gc.SHIELD, gc.BLACK)
+        self.spawn_star_images = self.get_specified_images(self.spritesheet, gc.SPAWN_STAR, gc.BLACK)
+        self.power_up_images = self.get_specified_images(self.spritesheet, gc.POWER_UPS, gc.BLACK)
+        self.flag = self.get_specified_images(self.spritesheet, gc.FLAG, gc.BLACK)
+        self.explosions = self.get_specified_images(self.spritesheet, gc.EXPLOSIONS, gc.BLACK)
+        self.score = self.get_specified_images(self.spritesheet, gc.SCORE, gc.BLACK)
+        self.hud_images = self.get_specified_images(self.spritesheet, gc.HUD_INFO, gc.BLACK, transparent=False)
+        self.context = self.get_specified_images(self.spritesheet, gc.CONTEXT, gc.BLACK)
 
-        self.brick_tiles = self._get_specified_images(self.spritesheet, gc.MAP_TILES["bricks"], gc.BLACK)
-        self.steel_tiles = self._get_specified_images(self.spritesheet, gc.MAP_TILES["steel"], gc.BLACK)
-        self.forest_tiles = self._get_specified_images(self.spritesheet, gc.MAP_TILES["forest"], gc.BLACK)
-        self.ice_tiles = self._get_specified_images(self.spritesheet, gc.MAP_TILES["ice"], gc.BLACK)
-        self.water_tiles = self._get_specified_images(self.spritesheet, gc.MAP_TILES["water"], gc.BLACK)
-        self.number_black_white = self._get_specified_images(self.number_image_black_white, gc.NUMS, gc.BLACK)
-        self.number_black_orange = self._get_specified_images(self.number_image_black_orange, gc.NUMS, gc.BLACK) 
+        self.brick_tiles = self.get_specified_images(self.spritesheet, gc.MAP_TILES["bricks"], gc.BLACK)
+        self.steel_tiles = self.get_specified_images(self.spritesheet, gc.MAP_TILES["steel"], gc.BLACK)
+        self.forest_tiles = self.get_specified_images(self.spritesheet, gc.MAP_TILES["forest"], gc.BLACK)
+        self.ice_tiles = self.get_specified_images(self.spritesheet, gc.MAP_TILES["ice"], gc.BLACK)
+        self.water_tiles = self.get_specified_images(self.spritesheet, gc.MAP_TILES["water"], gc.BLACK)
+        self.number_black_white = self.get_specified_images(self.number_image_black_white, gc.NUMS, gc.BLACK)
+        self.number_black_orange = self.get_specified_images(self.number_image_black_orange, gc.NUMS, gc.BLACK) 
 
         #Load ảnh của bảng điểm
         self.score_sheet_image = {}
@@ -67,14 +67,14 @@ class GameAssets:
         #               },.....
         # }
 
-        #Dùng 3 dòng for vs mỗi dòng for tương ứng cho 1 ảnh lần lượt là: tank level, loại tank, hướng đi
+        #Dùng 3 dòng for vs mỗi dòng for thay cho khai báo thủ công với lần lượt phần tử là: tank level, loại tank, hướng đi
         tank_image_dict = {}
         for tank in range(8):
-            tank_image_dict[f"Tank_{tank}"] = {} #Dòng for này cho tank level
+            tank_image_dict[f"Tank_{tank}"] = {}
             for group in ["Gold", "Silver", "Green", "Special"]:
-                tank_image_dict[f"Tank_{tank}"][group] = {} #Dòng for này cho loại tank
+                tank_image_dict[f"Tank_{tank}"][group] = {}
                 for direction in ["Up", "Down", "Left", "Right"]:
-                    tank_image_dict[f"Tank_{tank}"][group][direction] = [] #Dòng for này cho hướng đi của tank
+                    tank_image_dict[f"Tank_{tank}"][group][direction] = []
 
         #Duyệt ma trận 16 * 16 tương ứng vs ảnh tank trong spritesheet
         for row in range(16): 
@@ -87,28 +87,24 @@ class GameAssets:
                 surface = self.scale_image(surface, gc.spriteScale)
 
                 #sắp xếp tank theo dict đã phân
-                tank_level = self._sort_tanks_into_levels(row)
-                tank_group = self._sort_tanks_into_groups(row, col)
-                tank_direction = self._sort_tanks_by_direction(col)
+                tank_level = self.sort_levels(row)
+                tank_group = self.sort_groups(row, col)
+                tank_direction = self.sort_direction(col)
                 tank_image_dict[tank_level][tank_group][tank_direction].append(surface)
         return tank_image_dict
 
     #Chỉnh sửa kích thước ảnh
     def scale_image(self, image, scale):
         width, height = image.get_size()
-        """Scales the image according to the size passed in"""
         image = pygame.transform.scale(image, (scale * width, scale * height))
         return image
 
     #Sắp xếp các ảnh tank theo loại đã phân
-    def _sort_tanks_into_levels(self, row):
-        """Sorts the tanks according to the row"""
-        tank_levels = {0: "Tank_0", 1: "Tank_1", 2: "Tank_2", 3: "Tank_3",
-                       4: "Tank_4", 5: "Tank_5", 6: "Tank_6", 7: "Tank_7"}
+    def sort_levels(self, row):
+        tank_levels = {0: "Tank_0", 1: "Tank_1", 2: "Tank_2", 3: "Tank_3", 4: "Tank_4", 5: "Tank_5", 6: "Tank_6", 7: "Tank_7"}
         return tank_levels[row % 8]
 
-    def _sort_tanks_into_groups(self, row, col):
-        """Sort each tank image into its different colour groups"""
+    def sort_groups(self, row, col):
         if 0 <= row <= 7 and 0 <= col <= 7:
             return "Gold"
         elif 8 <= row <= 16 and 0 <= col <= 7:
@@ -118,8 +114,7 @@ class GameAssets:
         else:
             return "Special"
 
-    def _sort_tanks_by_direction(self, col):
-        """Returns the current tank image by direction"""
+    def sort_direction(self, col):
         if col == 0 or col == 1 or col == 8  or col == 9: return "Up"
         elif col == 2 or col == 3 or col == 10 or col == 11: return "Left"
         elif col == 4 or col == 5 or col == 12 or col == 13: return "Down"
@@ -127,7 +122,7 @@ class GameAssets:
             return "Right"
 
     #Lấy ảnh cho các dict ngoài tank
-    def _get_specified_images(self, spritesheet, image_dict, color, transparent = True):
+    def get_specified_images(self, spritesheet, image_dict, color, transparent = True):
         img_dict ={}
         for key, pos in image_dict.items():
             img = self._get_images(spritesheet, pos[0], pos[1], pos[2], pos[3],color, transparent)

@@ -5,20 +5,21 @@ from game_HUD import game_HUD
 
 class Game:
     def __init__(self, main, assets, player1 = True, player2 = False):
-        """The main Game Object when playing"""
-        #  Main file
+
+        #  Các thuộc tính cơ bản
         self.main = main
         self.assets = assets
 
-        #  Object Groups
+        #  Các group đối tượng
         self.groups = {"All_Tanks": pygame.sprite.Group()}
         
         self.player1_active = player1
         self.player2_active = player2
 
+        #Màn hình Heads-Up Display (hiển thị thông tin của người chơi) (HUD)
         self.hud = game_HUD(self, self.assets)
 
-        #  Player Objects
+        #  Đối tượng người chơi
         if self.player1_active:
             self.player1 = Player(self, self.assets, self.groups, (200, 200), "Up", "Gold", 0)
         if self.player2_active:

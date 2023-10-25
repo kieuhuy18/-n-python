@@ -4,6 +4,7 @@ from game_assets import GameAssets
 from game import Game
 
 class MainGame:
+
     #Hàm khởi tạo game
     def __init__(self):
         #Khởi tạo game
@@ -14,6 +15,8 @@ class MainGame:
         pygame.display.set_caption("Battle City")
         self.clock = pygame.time.Clock()
         self.run = True
+
+        #Gọi đối tượng game assets
         self.assets = GameAssets() 
 
         #Gọi đối tượng game
@@ -44,8 +47,8 @@ class MainGame:
             self.game.update()
     
     def draw(self):
-        #In lên màn hình
         self.screen.fill(gc.BLACK)
+
         #self.screen.blit(self.assets.bullet_images["Up"], (400, 400))
 
         if self.game_on:
