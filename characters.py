@@ -86,7 +86,7 @@ class Tank(pygame.sprite.Sprite):
     def tank_move_animation(self):
         self.frame_index += 1
         self.frame_index = self.frame_index % 2
-        self.image = self.tank_image[f"Tank_{self.tank_level}"][self.colour][self.direction][self.frame_index]  
+        self.image = self.tank_images[f"Tank_{self.tank_level}"][self.colour][self.direction][self.frame_index]  
 
     def spawn_animation(self):
         self.frame_index += 1

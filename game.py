@@ -19,6 +19,9 @@ class Game:
         #Màn hình Heads-Up Display (hiển thị thông tin của người chơi) (HUD)
         self.hud = game_HUD(self, self.assets)
 
+        #level
+        self.level = 1
+
         #  Đối tượng người chơi
         if self.player1_active:
             self.player1 = Player(self, self.assets, self.groups, (200, 200), "Up", "Gold", 0)
