@@ -125,7 +125,7 @@ class GameAssets:
     def get_specified_images(self, spritesheet, image_dict, color, transparent = True):
         img_dict = {}
         for key, pos in image_dict.items():
-            img = self._get_images(spritesheet, pos[0], pos[1], pos[2], pos[3],color, transparent)
+            img = self._get_images(spritesheet, pos[0], pos[1], pos[2], pos[3], color, transparent)
             img_dict.setdefault(key, img)
         return img_dict
 

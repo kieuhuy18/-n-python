@@ -28,7 +28,22 @@ class game_HUD:
         overlay_screen.blit(self.images["info_panel"], (gc.Info_x, gc.Info_y))
         overlay_screen.set_colorkey(gc.BLACK)
         return overlay_screen
-    
+
+    def draw_enemies(self, window):
+        row = 0
+        offset_x, offset_x_2 = 14.5 * gc.imageSize, 15 * gc.imageSize
+        for num in range(gc.Enemies):
+            if num % 2 == 0:
+                x, y = offset_x, (4 + row) * (gc.imageSize//2)
+            else:
+                x, y = offset_x_2, (4 + row) * (gc.imageSize//2)
+                row += 1
+            if num < self.enemies:
+                window.blit(self.images["life"], (x, y))
+            else:
+                window.blit(self.images["grey_square"], (x, y))
+        return
+
     def display_player_lives(self, lives, player_active):
         width, height = gc.imageSize, gc.imageSize // 2
         surface = pygame.Surface((width, height))
@@ -66,6 +81,7 @@ class game_HUD:
         return surface
 
     def update(self):
+        self.enemies = self.game.enemies
         #  Update the number of player lives available
         self.player1_active = self.game.player1_active
         if self.player1_active:
@@ -84,6 +100,8 @@ class game_HUD:
 
     def draw(self, window):
         window.blit(self.hud_overlay, (0, 0))
+
+        self.draw_enemies(window)
 
         window.blit(self.player1_lives_image, (14.5 * gc.imageSize, 9.5 * gc.imageSize))
         window.blit(self.player2_lives_image, (14.5 * gc.imageSize, 11 * gc.imageSize))

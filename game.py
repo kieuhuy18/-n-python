@@ -28,6 +28,8 @@ class Game:
         if self.player2_active:
             self.player2 = Player(self, self.assets, self.groups, (400, 200), "Up", "Green", 0)
 
+        self.enemies = 20
+
     def input(self):
         """Handle inputs for the game when it is running"""
         keypressed = pygame.key.get_pressed()

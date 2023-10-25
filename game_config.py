@@ -7,6 +7,7 @@ SCREENHEIGHT = 14 * imageSize
 
 GAME_SCREEN = (imageSize, imageSize // 2, imageSize * 13, imageSize * 13)
 Info_x, Info_y = SCREENWIDTH - (imageSize * 2), imageSize // 2
+Enemies = 20
 
 FPS = 60
 
