@@ -61,6 +61,7 @@ class Game:
                         self.player2.shoot()
                 # if event.key == pygame.K_RETURN:
                 #     self.enemies -= 1
+                
     def update(self):
         self.hud.update()
         # if self.player1_active:
@@ -68,7 +69,8 @@ class Game:
         # if self.player2_active:
         #     self.player2.update()
         for dict in self.groups.keys():
-            self.groups[dict].update()
+            for key in self.groups[dict]:
+                key.update()
 
     def draw(self, window):
         """Drawing to the screen"""
@@ -78,4 +80,5 @@ class Game:
         # if self.player2_active:
         #     self.player2.draw(window)
         for dict in self.groups.keys():
-            self.groups[dict].draw(window)
+            for key in self.groups[dict]:
+                key.draw(window)

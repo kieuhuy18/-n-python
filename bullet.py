@@ -23,8 +23,30 @@ class Bullet(pygame.sprite.Sprite):
 
         self.bullet.add(self)
 
+    def move(self):
+        speed = gc.Tank_speed * 3
+        if self.direction == "Up":
+            self.yPos -= speed
+        elif self.direction == "Down":
+            self.yPos += speed
+        elif self.direction == "Left":
+            self.xPos -= speed
+        elif self.direction == "Right":
+            self.xPos += speed
+        self.rect.center = (self.xPos, self.yPos)
+
+    def collide_edge_of_screen(self):
+        if self.rect.top <= gc.SCREEN_BORDER_TOP or self.rect.bottom >= gc.SCREEN_BORDER_BOTTOM or self.rect.left <= gc.SCREEN_BORDER_LEFT or self.rect.right >= gc.SCREEN_BORDER_RIGHT:
+            self.update_owner()
+            self.kill()
+            
+    def update_owner(self):
+        if self.owner.bullet_sum > 0:
+            self.owner.bullet_sum -= 1
+
     def update(self):
-        pass
+        self.move()
+        self.collide_edge_of_screen()
 
     def draw(self, window):
         window.blit(self.image, self.rect)

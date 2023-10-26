@@ -9,8 +9,8 @@ class Tank(pygame.sprite.Sprite):
         #  Các thuộc tính cơ bản
         self.game = game
         self.assets = assets
-        self.groups = groups
-        self.tank_group = self.groups["All_Tanks"]
+        self.group = groups
+        self.tank_group = self.group["All_Tanks"]
 
         #  Thêm đối tượng tank vào group
         self.tank_group.add(self)
@@ -40,6 +40,10 @@ class Tank(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(self.spawn_pos)) 
         self.width, self.height = self.image.get_size()
         #Note ^
+
+        #Shoot cooldown
+        self.bullet_limit = 1
+        self.bullet_sum = 0
 
         #spawn images
         self.spawn_image = self.spawn_images[f"star_{self.frame_index}"]
@@ -102,7 +106,7 @@ class Tank(pygame.sprite.Sprite):
         self.frame_index += 1
         self.frame_index = self.frame_index % 4
         self.spawn_image = self.spawn_images[f"star_{self.frame_index}"]
-        spawn_anim_timer = pygame.time.get_ticks()
+        spawn_ani_timer = pygame.time.get_ticks()
 
 
     def tank_collision(self):    
@@ -130,11 +134,15 @@ class Tank(pygame.sprite.Sprite):
                     self.yPos = self.rect.y
 
     def shoot(self):
-        bulletT = Bullet(self.groups, self, self.rect.center, self.direction, self.assets)
+        if self.bullet_sum >= self.bullet_limit:
+            return
+        bulletT = Bullet(self.group, self, self.rect.center, self.direction, self.assets)
+        self.bullet_sum += 1
+
 class Player(Tank):
-    def __init__(self, game, assets, groups, position, direction, colour, tank_level):
-        super().__init__(game, assets, groups, position, direction, colour, tank_level)
-        self.lives = 76
+    def __init__(self, game, assets, group, position, direction, colour, tank_level):
+        super().__init__(game, assets, group, position, direction, colour, tank_level)
+        self.lives = 3
 
     def input(self, keypressed):
         if self.colour == "Gold":
