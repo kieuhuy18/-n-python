@@ -11,7 +11,8 @@ class Game:
         self.assets = assets
 
         #  Các group đối tượng
-        self.groups = {"All_Tanks": pygame.sprite.Group()}
+        self.groups = {"All_Tanks": pygame.sprite.Group(),
+                       "Bullets": pygame.sprite.Group()}
         
         self.player1_active = player1
         self.player2_active = player2
@@ -50,19 +51,31 @@ class Game:
                 # if event.key == pygame.K_RETURN:
                 #     self.player1.lives -= 1
                 # if event.key == pygame.K_SPACE:
-                #     self.player2.lives -= 1
-
+                #     self.player2.lives -= 
+                
+                if event.key == pygame.K_SPACE:
+                    if self.player1_active:
+                        self.player1.shoot()
+                if event.key == pygame.K_RETURN:
+                    if self.player2_active:
+                        self.player2.shoot()
+                # if event.key == pygame.K_RETURN:
+                #     self.enemies -= 1
     def update(self):
         self.hud.update()
-        if self.player1_active:
-            self.player1.update()
-        if self.player2_active:
-            self.player2.update()
+        # if self.player1_active:
+        #     self.player1.update()
+        # if self.player2_active:
+        #     self.player2.update()
+        for dict in self.groups.keys():
+            self.groups[dict].update()
 
     def draw(self, window):
         """Drawing to the screen"""
         self.hud.draw(window)
-        if self.player1_active:
-            self.player1.draw(window)
-        if self.player2_active:
-            self.player2.draw(window)
+        # if self.player1_active:
+        #     self.player1.draw(window)
+        # if self.player2_active:
+        #     self.player2.draw(window)
+        for dict in self.groups.keys():
+            self.groups[dict].draw(window)

@@ -1,5 +1,6 @@
 import pygame
 import game_config as gc
+from bullet import Bullet
 
 
 class Tank(pygame.sprite.Sprite):
@@ -128,7 +129,8 @@ class Tank(pygame.sprite.Sprite):
                     self.rect.bottom = tank.rect.top
                     self.yPos = self.rect.y
 
-
+    def shoot(self):
+        bulletT = Bullet(self.groups, self, self.rect.center, self.direction, self.assets)
 class Player(Tank):
     def __init__(self, game, assets, groups, position, direction, colour, tank_level):
         super().__init__(game, assets, groups, position, direction, colour, tank_level)
