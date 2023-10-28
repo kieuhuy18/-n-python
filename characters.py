@@ -4,7 +4,7 @@ from bullet import Bullet
 
 
 class Tank(pygame.sprite.Sprite):
-    def __init__(self, game, assets, groups, position, direction, colour="Silver", tank_level=0):
+    def __init__(self, game, assets, groups, position, direction, enemy = True, colour="Silver", tank_level=0):
         super().__init__()
         #  Các thuộc tính cơ bản
         self.game = game
@@ -31,7 +31,9 @@ class Tank(pygame.sprite.Sprite):
         #  Common Tank Attributes
         self.tank_level = tank_level
         self.colour = colour
-        self.tank_speed =gc.Tank_speed
+        self.tank_speed =gc.TANK_SPEED
+
+        self.Enemy = enemy
 
         #  Tank Image, Rectangle, and Frame Index
         #Note:
@@ -44,6 +46,11 @@ class Tank(pygame.sprite.Sprite):
         #Shoot cooldown
         self.bullet_limit = 1
         self.bullet_sum = 0
+
+        # Làm tê liệt tank
+        self.paralyzed = False
+        self.paralysis = gc.TANK_PARALYSIS
+        self.paralysis_timer = pygame.time.Clock()
 
         #spawn images
         self.spawn_image = self.spawn_images[f"star_{self.frame_index}"]
@@ -61,7 +68,11 @@ class Tank(pygame.sprite.Sprite):
                 self.frame_index = 0
                 self.spawning = False
                 self.active = True
-        return
+            return
+        
+        if self.paralyzed:
+            if pygame.time.get_ticks() - self.paralysis_timer >= self.paralysis:
+                self.paralyzed = False
 
     def draw(self, window):
         if self.spawning:
@@ -74,7 +85,12 @@ class Tank(pygame.sprite.Sprite):
     def move_tank(self, direction):
         if self.spawning:
             return
+        
         self.direction = direction
+
+        if self.paralyzed:
+            return
+        
         if direction == "Up":
             self.yPos -= self.tank_speed
             if self.yPos < gc.SCREEN_BORDER_TOP:
@@ -108,7 +124,6 @@ class Tank(pygame.sprite.Sprite):
         self.spawn_image = self.spawn_images[f"star_{self.frame_index}"]
         spawn_ani_timer = pygame.time.get_ticks()
 
-
     def tank_collision(self):    
         tank_coll = pygame.sprite.spritecollide(self, self.tank_group, False) #Hàm trả về danh sách các sprite xung đột, luôn có 1 tank trong này
         if len(tank_coll) == 1:
@@ -139,9 +154,14 @@ class Tank(pygame.sprite.Sprite):
         bulletT = Bullet(self.group, self, self.rect.center, self.direction, self.assets)
         self.bullet_sum += 1
 
+    def paralyze_tank(self, paralysis_time):
+        self.paralysis = paralysis_time
+        self.paralyzed = True
+        self.paralysis_timer = pygame.time.get_ticks()
+
 class Player(Tank):
     def __init__(self, game, assets, group, position, direction, colour, tank_level):
-        super().__init__(game, assets, group, position, direction, colour, tank_level)
+        super().__init__(game, assets, group, position, direction, False, colour, tank_level)
         self.lives = 3
 
     def input(self, keypressed):

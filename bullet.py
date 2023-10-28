@@ -24,7 +24,7 @@ class Bullet(pygame.sprite.Sprite):
         self.bullet.add(self)
 
     def move(self):
-        speed = gc.Tank_speed * 3
+        speed = gc.TANK_SPEED * 3
         if self.direction == "Up":
             self.yPos -= speed
         elif self.direction == "Down":
@@ -39,14 +39,26 @@ class Bullet(pygame.sprite.Sprite):
         if self.rect.top <= gc.SCREEN_BORDER_TOP or self.rect.bottom >= gc.SCREEN_BORDER_BOTTOM or self.rect.left <= gc.SCREEN_BORDER_LEFT or self.rect.right >= gc.SCREEN_BORDER_RIGHT:
             self.update_owner()
             self.kill()
-            
+
     def update_owner(self):
         if self.owner.bullet_sum > 0:
             self.owner.bullet_sum -= 1
 
+    def collide_tank(self):
+        tank_collisions = pygame.sprite.groupcollide(self, self.tank, False)
+        for tank in tank_collisions:
+            if self.owner == tank:
+                continue    
+            if self.owner.Enemy == False and tank.Enemy == False:
+                self.update_owner()
+                tank.paralyze_tank(gc.TANK_PARALYSIS)
+                self.kill()
+                break
+
     def update(self):
         self.move()
         self.collide_edge_of_screen()
+        self.collide_tank()
 
     def draw(self, window):
         window.blit(self.image, self.rect)
