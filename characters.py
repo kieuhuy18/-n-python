@@ -34,6 +34,7 @@ class Tank(pygame.sprite.Sprite):
         self.tank_speed =gc.TANK_SPEED
 
         self.Enemy = enemy
+        self.health = 1
 
         #  Tank Image, Rectangle, and Frame Index
         #Note:
@@ -159,6 +160,12 @@ class Tank(pygame.sprite.Sprite):
         self.paralyzed = True
         self.paralysis_timer = pygame.time.get_ticks()
 
+    def destroy_tank(self):
+        self.health -= 1
+        if self.health <= 0:
+            self.kill()
+            return
+        
 class Player(Tank):
     def __init__(self, game, assets, group, position, direction, colour, tank_level):
         super().__init__(game, assets, group, position, direction, False, colour, tank_level)

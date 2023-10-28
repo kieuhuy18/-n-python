@@ -59,8 +59,10 @@ class Game:
                 if event.key == pygame.K_RETURN:
                     if self.player2_active:
                         self.player2.shoot()
-                # if event.key == pygame.K_RETURN:
-                #     self.enemies -= 1
+
+                if event.key == pygame.K_RETURN:
+                    Tank(self, self.assets, self.groups, (400, 400), "Down")
+                    self.enemies -= 1
                 
     def update(self):
         self.hud.update()
