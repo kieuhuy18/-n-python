@@ -21,6 +21,9 @@ class Bullet(pygame.sprite.Sprite):
         self.image = self.images[self.direction]
         self.rect = self.image.get_rect(center = (self.xPos, self.yPos))
 
+        self.mask = pygame.mask.from_surface(self.image)
+        #self.mask_image = self.mask.to_surface()
+
         self.bullet.add(self)
 
     def move(self):
@@ -48,18 +51,20 @@ class Bullet(pygame.sprite.Sprite):
         tank_collisions = pygame.sprite.spritecollide(self, self.tank, False)
         for tank in tank_collisions:
             if self.owner == tank or tank.spawning == True:
-                continue    
-            if self.owner.Enemy == False and tank.Enemy == False:
-                self.update_owner()
-                tank.paralyze_tank(gc.TANK_PARALYSIS)
-                self.kill()
-                break
+                continue   
+            if pygame.sprite.collide_mask(self, tank): 
+                if self.owner.Enemy == False and tank.Enemy == False:
+                    self.update_owner()
+                    tank.paralyze_tank(gc.TANK_PARALYSIS)
+                    self.kill()
+                    break
 
             if(self.owner.Enemy == False and tank.Enemy == True) or (self.owner.Enemy == True and tank.Enemy == False):
-                self.update_owner()
-                tank.destroy_tank()
-                self.kill()
-                break
+                if self.owner.Enemy == False and tank.Enemy == False:
+                    self.update_owner()
+                    tank.destroy_tank()
+                    self.kill()
+                    break
 
     def collision_bullet(self):
         Bullet_hit = pygame.sprite.spritecollide(self, self.bullet, False)
@@ -68,10 +73,12 @@ class Bullet(pygame.sprite.Sprite):
         for bullet in Bullet_hit:
             if bullet == self:
                 continue
-            bullet.update_owner()
-            bullet.kill()
-            self.update_owner()
-            self.kill()
+            if pygame.sprite.collide_mask(self, bullet):
+                bullet.update_owner()
+                bullet.kill()
+                self.update_owner()
+                self.kill()
+                break
 
     def update(self):
         self.move()
@@ -81,4 +88,5 @@ class Bullet(pygame.sprite.Sprite):
 
     def draw(self, window):
         window.blit(self.image, self.rect)
+        #window.blit(self.mask_image, self.rect)
         pygame.draw.rect(window, gc.GREEN, self.rect, 1)

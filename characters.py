@@ -58,6 +58,11 @@ class Tank(pygame.sprite.Sprite):
         self.spawn_time = pygame.time.get_ticks()
         self.spawn_ani_time = pygame.time.get_ticks()
 
+        self.mask_dict = self.get_various_mask()
+        self.mask = self.mask_dict[self.direction]
+        #self.mask_image = self.mask.to_surface()
+        self.mask_dicrection = self.direction
+
     def input(self):
         pass
 
@@ -81,6 +86,7 @@ class Tank(pygame.sprite.Sprite):
         #  If the tank is set to active, draw to screen
         if self.active:
             window.blit(self.image, self.rect)
+            #window.blit(self.mask_image,self.rect)
             pygame.draw.rect(window, gc.RED, self.rect, 1)
     
     def move_tank(self, direction):
@@ -118,6 +124,11 @@ class Tank(pygame.sprite.Sprite):
         self.frame_index += 1
         self.frame_index = self.frame_index % 2
         self.image = self.tank_images[f"Tank_{self.tank_level}"][self.colour][self.direction][self.frame_index]  
+        
+        if self.mask_dicrection != self.direction:
+            self.mask_dicrection = self.direction
+            self.mask = self.mask_dict[self.mask_dicrection]
+            #self.mask_image = self.mask.to_surface()
 
     def spawn_animation(self):
         self.frame_index += 1
@@ -149,6 +160,13 @@ class Tank(pygame.sprite.Sprite):
                     self.rect.bottom = tank.rect.top
                     self.yPos = self.rect.y
 
+    def get_various_mask(self):
+        images = {}
+        for dict in ["Up", "Down", "Left", "Right"]:
+            image_to_mask = self.tank_images[f"Tank_{self.tank_level}"][self.colour][self.direction][0]
+            images.setdefault(dict, pygame.mask.from_surface(image_to_mask))
+        return images
+    
     def shoot(self):
         if self.bullet_sum >= self.bullet_limit:
             return
