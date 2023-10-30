@@ -2,6 +2,7 @@ import pygame
 import game_config as gc
 from game_assets import GameAssets
 from game import Game
+from level_editor import LevelEditor
 
 class MainGame:
 
@@ -20,8 +21,11 @@ class MainGame:
         self.assets = GameAssets() 
 
         #Gọi đối tượng game
-        self.game_on = True
+        self.game_on = False
         self.game = Game(self, self.assets, True, True)
+
+        self.level_editor_on = True
+        self.Creator = LevelEditor(self, self.assets)
 
     #Hàm chạy game chính
     def run_gamme(self):
@@ -33,8 +37,11 @@ class MainGame:
     def input(self): 
         if self.game_on:
             self.game.input()
+
+        if self.level_editor_on:
+            self.Creator.input()
             
-        if not self.game_on:
+        if not self.game_on and self.level_editor_on == False:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.run = False
@@ -45,14 +52,18 @@ class MainGame:
 
         if self.game_on:
             self.game.update()
-    
+
+        if self.level_editor_on:
+            self.Creator.update()
+
     def draw(self):
         self.screen.fill(gc.BLACK)
 
-        #self.screen.blit(self.assets.bullet_images["Up"], (400, 400))
-
         if self.game_on:
             self.game.draw(self.screen)
+        
+        if self.level_editor_on:
+            self.Creator.draw(self.screen)
         pygame.display.update()
 
 #Chạy game

@@ -38,11 +38,11 @@ class GameAssets:
         self.hud_images = self.get_specified_images(self.spritesheet, gc.HUD_INFO, gc.BLACK, transparent=False)
         self.context = self.get_specified_images(self.spritesheet, gc.CONTEXT, gc.BLACK)
 
-        self.brick_tiles = self.get_specified_images(self.spritesheet, gc.MAP_TILES["bricks"], gc.BLACK)
-        self.steel_tiles = self.get_specified_images(self.spritesheet, gc.MAP_TILES["steel"], gc.BLACK)
-        self.forest_tiles = self.get_specified_images(self.spritesheet, gc.MAP_TILES["forest"], gc.BLACK)
-        self.ice_tiles = self.get_specified_images(self.spritesheet, gc.MAP_TILES["ice"], gc.BLACK)
-        self.water_tiles = self.get_specified_images(self.spritesheet, gc.MAP_TILES["water"], gc.BLACK)
+        self.brick_tiles = self.get_specified_images(self.spritesheet, gc.MAP_TILES[123], gc.BLACK)
+        self.steel_tiles = self.get_specified_images(self.spritesheet, gc.MAP_TILES[234], gc.BLACK)
+        self.forest_tiles = self.get_specified_images(self.spritesheet, gc.MAP_TILES[345], gc.BLACK)
+        self.ice_tiles = self.get_specified_images(self.spritesheet, gc.MAP_TILES[456], gc.BLACK)
+        self.water_tiles = self.get_specified_images(self.spritesheet, gc.MAP_TILES[567], gc.BLACK)
         self.number_black_white = self.get_specified_images(self.number_image_black_white, gc.NUMS, gc.BLACK)
         self.number_black_orange = self.get_specified_images(self.number_image_black_orange, gc.NUMS, gc.BLACK) 
 

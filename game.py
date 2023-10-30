@@ -60,16 +60,12 @@ class Game:
                     if self.player2_active:
                         self.player2.shoot()
 
-                if event.key == pygame.K_RETURN:
+                if event.key == pygame.K_LSHIFT:
                     Tank(self, self.assets, self.groups, (400, 400), "Down")
                     self.enemies -= 1
                 
     def update(self):
         self.hud.update()
-        # if self.player1_active:
-        #     self.player1.update()
-        # if self.player2_active:
-        #     self.player2.update()
         for dict in self.groups.keys():
             for key in self.groups[dict]:
                 key.update()

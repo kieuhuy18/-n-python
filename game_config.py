@@ -55,20 +55,20 @@ BULLETS = {"Up": [(spriteSize * 20), (spriteSize * 6) + 4, 8, 8],
            "Down": [(spriteSize * 21), (spriteSize * 6) + 4, 8, 8],
            "Right": [(spriteSize * 21) + 8, (spriteSize * 6) + 4, 8, 8]}
 MAP_TILES = {
-    #  432
-    "bricks": {"small": [spriteSize * 16, spriteSize * 4, 8, 8],
+    #  432 bricks
+    123: {"small": [spriteSize * 16, spriteSize * 4, 8, 8],
           "small_right": [(spriteSize * 16) + 12, spriteSize * 4, 4, 8],
           "small_bot": [spriteSize * 17, (spriteSize * 4) + 4, 8, 4],
           "small_left": [(spriteSize * 17) + 8, spriteSize * 4, 4, 8],
           "small_top": [(spriteSize * 18), spriteSize * 4, 8, 4]},
-    #  482
-    "steel": {"small": [spriteSize * 16, (spriteSize * 4) + 8, 8, 8]},
-    #  483
-    "forest": {"small": [(spriteSize * 16) + 8, (spriteSize * 4) + 8, 8, 8]},
-    #  484
-    "ice": {"small": [(spriteSize * 17), (spriteSize * 4) + 8, 8, 8]},
-    #  533
-    "water": {"small_1": [(spriteSize * 16) + 8, (spriteSize * 5), 8, 8],
+    #  482 steel
+    234: {"small": [spriteSize * 16, (spriteSize * 4) + 8, 8, 8]},
+    #  483 forest
+    345: {"small": [(spriteSize * 16) + 8, (spriteSize * 4) + 8, 8, 8]},
+    #  484 ice
+    456: {"small": [(spriteSize * 17), (spriteSize * 4) + 8, 8, 8]},
+    #  533 water
+    567: {"small_1": [(spriteSize * 16) + 8, (spriteSize * 5), 8, 8],
           "small_2": [(spriteSize * 17), (spriteSize * 5), 8, 8]}
 }
 HUD_INFO = {"stage":    [(16 * 20) + 8, (16 * 11), 40, 8],

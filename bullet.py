@@ -60,11 +60,10 @@ class Bullet(pygame.sprite.Sprite):
                     break
 
             if(self.owner.Enemy == False and tank.Enemy == True) or (self.owner.Enemy == True and tank.Enemy == False):
-                if self.owner.Enemy == False and tank.Enemy == False:
-                    self.update_owner()
-                    tank.destroy_tank()
-                    self.kill()
-                    break
+                self.update_owner()
+                tank.destroy_tank()
+                self.kill()
+                break
 
     def collision_bullet(self):
         Bullet_hit = pygame.sprite.spritecollide(self, self.bullet, False)
