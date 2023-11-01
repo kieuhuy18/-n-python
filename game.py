@@ -3,7 +3,7 @@ import game_config as gc
 from characters import Tank, Player
 from game_HUD import game_HUD
 from random import choice, shuffle
-from tile import BrickTile
+from tile import BrickTile, SteelTile, ForestTile, IceTile, WaterTile
 
 class Game:
     def __init__(self, main, assets, player1 = True, player2 = False):
@@ -13,11 +13,14 @@ class Game:
         self.assets = assets
 
         #  Các group đối tượng
-        self.groups = {"Player_Tanks": pygame.sprite.Group(),
+        self.groups = {"Ice_Tiles": pygame.sprite.Group(),
+                       "Water_Tiles": pygame.sprite.Group(),
+                       "Player_Tanks": pygame.sprite.Group(),
                        "All_Tanks": pygame.sprite.Group(),
                        "Bullets": pygame.sprite.Group(),
                        "Destructable_Tiles": pygame.sprite.Group(),
-                       "Impassable_Tiles": pygame.sprite.Group()}
+                       "Impassable_Tiles": pygame.sprite.Group(),
+                       "Forest_Tiles": pygame.sprite.Group()}
         
         self.player1_active = player1
         self.player2_active = player2
@@ -81,11 +84,9 @@ class Game:
     def draw(self, window):
         """Drawing to the screen"""
         self.hud.draw(window)
-        # if self.player1_active:
-        #     self.player1.draw(window)
-        # if self.player2_active:
-        #     self.player2.draw(window)
         for dict in self.groups.keys():
+            if dict == "Impassable_Tiles":
+                continue
             for key in self.groups[dict]:
                 key.draw(window)
 
@@ -131,12 +132,19 @@ class Game:
                     self.groups["Impassable_Tiles"].add(map_tile)
                 elif int(tile) == 234:
                     line.append(f"{tile}")
+                    map_tile = SteelTile(pos, self.groups["Destructable_Tiles"], self.assets.steel_tiles)
+                    self.groups["Impassable_Tiles"].add(map_tile)
                 elif int(tile) == 345:
                     line.append(f"{tile}")
+                    map_tile = ForestTile(pos, self.groups["Forest_Tiles"], self.assets.forest_tiles)
                 elif int(tile) == 456:
                     line.append(f"{tile}")
+                    map_tile = IceTile(pos, self.groups["Ice_Tiles"], self.assets.ice_tiles)
+                    self.groups["Impassable_Tiles"].add(map_tile)
                 elif int(tile) == 567:
                     line.append(f"{tile}")
+                    map_tile = WaterTile(pos, self.groups["Water_Tiles"], self.assets.water_tiles)
+                    self.groups["Impassable_Tiles"].add(map_tile)
                 else:
                     line.append(f"{tile}")
             self.grid.append(line)

@@ -51,3 +51,42 @@ class BrickTile(TileType):
         elif bullet.direction == "Down":
             self.image = self.images["small_bot"]
             self._get_rect_and_size((self.xPos, self.yPos + self.height//2))
+
+class SteelTile(TileType):
+    def __init__(self, pos, group, map_tile):
+        super().__init__(pos, group, map_tile)
+        self.name = "Steel"
+
+        self.image = self.images["small"]
+        self._get_rect_and_size((self.xPos, self.yPos))
+
+    def hit_by_bullet(self, bullet):
+        bullet.update_owner()
+        bullet.kill()
+
+class ForestTile(TileType):
+    def __init__(self, pos, group, map_tile):
+        super().__init__(pos, group, map_tile)
+
+        self.image = self.images["small"]
+        self._get_rect_and_size((self.xPos, self.yPos))
+
+class IceTile(ForestTile):
+    def __init__(self, pos, group, map_tile):
+        super().__init__(pos, group, map_tile)
+
+class WaterTile(TileType):
+    def __init__(self, pos, group, map_tile):
+        super().__init__(pos, group, map_tile)
+
+        self.image = self.images["small_1"]
+        self._get_rect_and_size((self.xPos, self.yPos))
+
+        self.frame_index = 0
+        self.timer = pygame.time.get_ticks()
+
+    def update(self):
+        if pygame.time.get_ticks() - self.timer >= 500:
+            self.frame_index = 1 if self.frame_index == 0 else 0
+            self.timer = pygame.time.get_ticks()
+            self.image = self.images[f"small_{self.frame_index + 1}"]
