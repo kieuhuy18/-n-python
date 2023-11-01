@@ -16,7 +16,7 @@ class GameAssets:
         #Load 2 ảnh bắt đầu
         self.start_screen = self.load_img("start_screen", True, (gc.SCREENWIDTH,gc.SCREENHEIGHT))
         self.start_screen_token = self.load_img("token", True, (gc.imageSize,gc.imageSize))
-
+        
         #Load spritesheet (ảnh battle_city)
         self.spritesheet = self.load_img("BattleCity")
 

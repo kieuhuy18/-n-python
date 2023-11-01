@@ -28,10 +28,10 @@ class MainGame:
 
         #Gọi đối tượng game
         self.game_on = False
-        self.game = Game(self, self.assets, True, True)
+        self.game = None
 
         self.level_editor_on = False
-        self.Creator = LevelEditor(self, self.assets)
+        self.level_create = None
 
     #Hàm chạy game chính
     def run_gamme(self):
@@ -48,7 +48,7 @@ class MainGame:
             self.start_screen_active = self.start_screen.input()
 
         if self.level_editor_on:
-            self.Creator.input()
+            self.level_create.input()
             
         if not self.game_on and not self.level_editor_on and not self.start_screen_active:
             for event in pygame.event.get():
@@ -65,8 +65,22 @@ class MainGame:
         if self.game_on:
             self.game.update()
 
+        if self.game:
+            if self.game.end_game == True:
+                self.start_screen = StartScreen(self, self.assets)
+                self.start_screen_active = True
+                self.game_on = False
+                self.game = None
+
         if self.level_editor_on:
-            self.Creator.update()
+            self.level_create.update()
+
+        if self.level_create:
+            if self.level_create.active == False:
+                self.start_screen = StartScreen(self, self.assets)
+                self.start_screen_active = True
+                self.level_editor_on = False
+                self.level_create = None
 
     def draw(self):
         self.screen.fill(gc.BLACK)
@@ -78,9 +92,19 @@ class MainGame:
             self.start_screen.draw(self.screen)
         
         if self.level_editor_on:
-            self.Creator.draw(self.screen)
+            self.level_create.draw(self.screen)
         pygame.display.update()
 
+    def start_new_game(self, player1, player2):
+        self.game_on = True
+        self.game = Game(self, self.assets, player1, player2)
+        self.start_screen_active = False
+
+    def start_new_create(self):
+        self.level_editor_on = True
+        self.level_create = LevelEditor(self, self.assets)
+        self.start_screen_active = False
+    
 #Chạy game
 if __name__ == "__main__":
     m = MainGame()

@@ -31,6 +31,8 @@ class Game:
 
         self.enemies = 20
 
+        self.end_game = False
+
     def input(self):
         """Handle inputs for the game when it is running"""
         keypressed = pygame.key.get_pressed()
@@ -47,7 +49,7 @@ class Game:
             #  Keyboard shortcut to quit game
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    self.main.run = False
+                    self.end_game = True
                 # if event.key == pygame.K_RETURN:
                 #     self.player1.lives -= 1
                 # if event.key == pygame.K_SPACE:
