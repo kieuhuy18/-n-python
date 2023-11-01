@@ -101,18 +101,22 @@ class Tank(pygame.sprite.Sprite):
         
         if direction == "Up":
             self.yPos -= self.tank_speed
+            self.xPos = self.grid_alignment_movement(self.xPos)
             if self.yPos < gc.SCREEN_BORDER_TOP:
                 self.yPos = gc.SCREEN_BORDER_TOP
         elif direction == "Down":
             self.yPos += self.tank_speed
+            self.xPos = self.grid_alignment_movement(self.xPos)
             if self.yPos + self.height > gc.SCREEN_BORDER_BOTTOM:
                 self.yPos = gc.SCREEN_BORDER_BOTTOM - self.height
         elif direction == "Left":
             self.xPos -= self.tank_speed
+            self.yPos = self.grid_alignment_movement(self.yPos)
             if self.xPos < gc.SCREEN_BORDER_LEFT:
                 self.xPos = gc.SCREEN_BORDER_LEFT
         elif direction == "Right":
             self.xPos += self.tank_speed
+            self.yPos = self.grid_alignment_movement(self.yPos)
             if self.xPos + self.width > gc.SCREEN_BORDER_RIGHT:
                 self.xPos = gc.SCREEN_BORDER_RIGHT - self.width
 
@@ -120,6 +124,26 @@ class Tank(pygame.sprite.Sprite):
         self.rect.topleft = (self.xPos, self.yPos)
         self.tank_move_animation()
         self.tank_collision()
+        self.tank_collisions_with_obstacles()
+
+    # Dịch chuyển vị trí vào lưới nhằm giúp tank dễ dàng di chuyển hơn trên lưới
+    def grid_alignment_movement(self, pos):
+        # Kiểm tra xem vị trí hiện tại có nằm trên grid không
+        if pos % (gc.imageSize//2) != 0:
+            # kiểm tra xem vị trí cách grid gần nhấn ở bên nào:
+
+            # Cách bên trái hơn:
+            if pos % (gc.imageSize // 2) < gc.imageSize // 4:
+                pos -= (pos % (gc.imageSize // 4))
+
+            #Cách bên phải hơn:
+            elif pos % (gc.imageSize // 2) > gc.imageSize // 4:
+                pos += (gc.imageSize//4) - (pos % (gc.imageSize//4))
+            
+            # Ở giữa, không cần sửa đổi
+            else:
+                return pos
+        return pos
 
     def tank_move_animation(self):
         self.frame_index += 1
@@ -159,6 +183,27 @@ class Tank(pygame.sprite.Sprite):
             elif self.direction == "Down":
                 if self.rect.bottom >= tank.rect.top and self.rect.left < tank.rect.right and self.rect.right > tank.rect.left:
                     self.rect.bottom = tank.rect.top
+                    self.yPos = self.rect.y
+
+    def tank_collisions_with_obstacles(self):
+        """Perform collision checks with tank and obstacles"""
+        wall_collision = pygame.sprite.spritecollide(self, self.group["Impassable_Tiles"], False)
+        for obstacle in wall_collision:
+            if self.direction == "Right":
+                if self.rect.right >= obstacle.rect.left:
+                    self.rect.right = obstacle.rect.left
+                    self.xPos = self.rect.x
+            elif self.direction == "Left":
+                if self.rect.left <= obstacle.rect.right:
+                    self.rect.left = obstacle.rect.right
+                    self.xPos = self.rect.x
+            elif self.direction == "Down":
+                if self.rect.bottom >= obstacle.rect.top:
+                    self.rect.bottom = obstacle.rect.top
+                    self.yPos = self.rect.y
+            elif self.direction == "Up":
+                if self.rect.top <= obstacle.rect.bottom:
+                    self.rect.top = obstacle.rect.bottom
                     self.yPos = self.rect.y
 
     def get_various_mask(self):

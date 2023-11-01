@@ -20,6 +20,9 @@ class TileType(pygame.sprite.Sprite):
     def draw(self, window):
         window.blit(self.image, self.rect)
 
+    def hit_by_bullet(self, bullet):
+        pass
+
 class BrickTile(TileType):
     def __init__(self, pos, group, map_tile):
         super().__init__(pos, group, map_tile)
@@ -28,3 +31,23 @@ class BrickTile(TileType):
 
         self.image = self.images["small"]
         self._get_rect_and_size((self.xPos, self.yPos))
+
+    def hit_by_bullet(self, bullet):
+        bullet.update_owner()
+        bullet.kill()
+        self.health -= 1
+        if self.health <= 0:
+            self.kill()
+            return
+        if bullet.direction == "Left":
+            self.image = self.images["small_left"]
+            self._get_rect_and_size((self.xPos, self.yPos))
+        elif bullet.direction == "Right":
+            self.image = self.images["small_right"]
+            self._get_rect_and_size((self.xPos + self.width//2, self.yPos))
+        elif bullet.direction == "Up":
+            self.image = self.images["small_top"]
+            self._get_rect_and_size((self.xPos, self.yPos))
+        elif bullet.direction == "Down":
+            self.image = self.images["small_bot"]
+            self._get_rect_and_size((self.xPos, self.yPos + self.height//2))

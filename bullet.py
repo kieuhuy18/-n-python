@@ -65,6 +65,12 @@ class Bullet(pygame.sprite.Sprite):
                 self.kill()
                 break
 
+    def collision_with_obstacle(self):
+        """Check for bullet collision with any of the obstacle tiles"""
+        obstacle_collide = pygame.sprite.spritecollide(self, self.group["Destructable_Tiles"], False)
+        for obstacle in obstacle_collide:
+            obstacle.hit_by_bullet(self)
+
     def collision_bullet(self):
         Bullet_hit = pygame.sprite.spritecollide(self, self.bullet, False)
         if len(Bullet_hit) == 1:
@@ -84,6 +90,7 @@ class Bullet(pygame.sprite.Sprite):
         self.collide_edge_of_screen()
         self.collide_tank()
         self.collision_bullet()
+        self.collision_with_obstacle()
 
     def draw(self, window):
         window.blit(self.image, self.rect)
