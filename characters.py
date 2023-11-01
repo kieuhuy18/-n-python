@@ -209,3 +209,7 @@ class Player(Tank):
                 self.move_tank("Left")
             elif keypressed[pygame.K_RIGHT]:
                 self.move_tank("Right")
+
+    def new_stage_spawn(self, spawn_pos):
+        self.xPos, self.yPos = spawn_pos
+        self.rect.topleft = (self.xPos, self.yPos)

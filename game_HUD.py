@@ -94,7 +94,7 @@ class game_HUD:
                 self.player2_lives = self.game.player2.lives
                 self.player2_lives_image = self.display_player_lives(self.player2_lives, self.player2_active)
 
-        if self.level != self.game.level:
+        if self.level != self.game.level_num:
             self.level = self.game.level
             self.level_image = self.display_level(self.level)
 
