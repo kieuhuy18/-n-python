@@ -3,6 +3,7 @@ import game_config as gc
 from characters import Tank, Player
 from game_HUD import game_HUD
 from random import choice, shuffle
+from tile import BrickTile
 
 class Game:
     def __init__(self, main, assets, player1 = True, player2 = False):
@@ -14,7 +15,9 @@ class Game:
         #  Các group đối tượng
         self.groups = {"Player_Tanks": pygame.sprite.Group(),
                        "All_Tanks": pygame.sprite.Group(),
-                       "Bullets": pygame.sprite.Group()}
+                       "Bullets": pygame.sprite.Group(),
+                       "Destructable_Tiles": pygame.sprite.Group(),
+                       "Impassable_Tiles": pygame.sprite.Group()}
         
         self.player1_active = player1
         self.player2_active = player2
@@ -57,10 +60,6 @@ class Game:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.end_game = True
-                # if event.key == pygame.K_RETURN:
-                #     self.player1.lives -= 1
-                # if event.key == pygame.K_SPACE:
-                #     self.player2.lives -= 
                 
                 if event.key == pygame.K_SPACE:
                     if self.player1_active:
@@ -68,10 +67,6 @@ class Game:
                 if event.key == pygame.K_RETURN:
                     if self.player2_active:
                         self.player2.shoot()
-
-                if event.key == pygame.K_LSHIFT:
-                    Tank(self, self.assets, self.groups, (400, 400), "Down")
-                    self.enemies -= 1
                 
     def update(self):
         self.hud.update()
@@ -132,6 +127,8 @@ class Game:
                     line.append("   ")
                 elif int(tile) == 123:
                     line.append(f"{tile}")
+                    map_tile = BrickTile(pos, self.groups["Destructable_Tiles"], self.assets.brick_tiles)
+                    self.groups["Impassable_Tiles"].add(map_tile)
                 elif int(tile) == 234:
                     line.append(f"{tile}")
                 elif int(tile) == 345:
@@ -160,6 +157,8 @@ class Game:
         """Spawn enemy tanks, each tank spawns as per the queue"""
         if self.enemies == 0:
             return
+        
+        # Kiểm tra xem thời gian đã đủ để tạo kẻ địch mới hay chưa
         if pygame.time.get_ticks() - self.enemy_tank_spawn_timer >= gc.TANK_SPAWNING_TIME:
             position = self.enemy_spawn_positions[self.spawn_pos_index % 3]
             tank_level = gc.Tank_Criteria[self.spawn_queue[self.spawn_queue_index % len(self.spawn_queue)]]["image"]
