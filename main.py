@@ -19,21 +19,23 @@ class MainGame:
         self.clock = pygame.time.Clock()
         self.run = True
 
-        #Gọi đối tượng game assets
+        #Gọi đối tượng game assets, game level
         self.assets = GameAssets()
         self.levels = LevelData() 
 
+        #Màn hình bắt đầu
         self.start_screen = StartScreen(self, self.assets)
         self.start_screen_active = True
 
-        #Gọi đối tượng game
+        #Chế độ game
         self.game_on = False
         self.game = None
 
+        # CHế độ edit level
         self.level_editor_on = False
         self.level_create = None
 
-    #Hàm chạy game chính
+    #Hàm chạy game
     def run_gamme(self):
         while self.run:
             self.input()
@@ -41,12 +43,15 @@ class MainGame:
             self.draw()
  
     def input(self): 
-        if self.game_on:
-            self.game.input()
-
+        #Chạy màn hình bắt đầu
         if self.start_screen_active:
             self.start_screen_active = self.start_screen.input()
 
+        #Nếu chọn chơi thì chạy game
+        if self.game_on:
+            self.game.input()
+
+        #Nếu chọn edit thì chạy phần edit
         if self.level_editor_on:
             self.level_create.input()
             
@@ -59,12 +64,15 @@ class MainGame:
         #Cài đặt fps cho game
         self.clock.tick(gc.FPS)
 
+        #Load màn hình chính
         if self.start_screen_active:
             self.start_screen.update()
 
+        #Load Game
         if self.game_on:
             self.game.update()
 
+        #Out ra màn hình khởi đầu khi kết thúc game
         if self.game:
             if self.game.end_game == True:
                 self.start_screen = StartScreen(self, self.assets)
@@ -72,9 +80,11 @@ class MainGame:
                 self.game_on = False
                 self.game = None
 
+        #Load phần edit
         if self.level_editor_on:
             self.level_create.update()
 
+        #Out ra màn hình khởi đầu khi kết thúc edit
         if self.level_create:
             if self.level_create.active == False:
                 self.start_screen = StartScreen(self, self.assets)
@@ -85,21 +95,26 @@ class MainGame:
     def draw(self):
         self.screen.fill(gc.BLACK)
 
+        #Vẽ màn hình bắt đầu
+        if self.start_screen_active:
+            self.start_screen.draw(self.screen)
+
+        #Vẽ màn hình game
         if self.game_on:
             self.game.draw(self.screen)
 
-        if self.start_screen_active:
-            self.start_screen.draw(self.screen)
-        
+        # Vẽ màn hình edit
         if self.level_editor_on:
             self.level_create.draw(self.screen)
         pygame.display.update()
 
+    #Bắt đầu game 
     def start_new_game(self, player1, player2):
         self.game_on = True
         self.game = Game(self, self.assets, player1, player2)
         self.start_screen_active = False
 
+    #Bắt đầu edit
     def start_new_create(self):
         self.level_editor_on = True
         self.level_create = LevelEditor(self, self.assets)

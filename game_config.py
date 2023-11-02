@@ -112,13 +112,13 @@ FORT = [(11, 25), (11, 24), (11, 23), (12, 23), (13, 23), (14, 23), (14, 24), (1
 Tank_Criteria = {
     "level_0": {"image": 4, "health": 1, "speed": 0.5, "cooldown": 1, "power": 1, "score": 100},
     "level_1": {"image": 5, "health": 1, "speed": 1, "cooldown": 1, "power": 1, "score": 200},
-    "level_2": {"image": 6, "health": 1, "speed": 0.5, "cooldown": 1, "power": 2, "score": 300},
+    "level_2": {"image": 6, "health": 2, "speed": 0.5, "cooldown": 1, "power": 1, "score": 300},
     "level_3": {"image": 7, "health": 4, "speed": 0.5, "cooldown": 1, "power": 2, "score": 400},
 }
 
 Tank_spawn_queue = {"queue_0": [90, 10, 0, 0],
                     "queue_1": [80, 20, 0, 0],
-                    "queue_2": [70, 30, 0, 0],
+                    "queue_2": [0, 0, 0, 100],
                     "queue_3": [60, 30, 10, 0],
                     "queue_4": [50, 30, 20, 0],
                     "queue_5": [40, 30, 30, 0],

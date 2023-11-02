@@ -38,6 +38,7 @@ class Game:
         if self.player2_active:
             self.player2 = Player(self, self.assets, self.groups, gc.Pl2_position, "Up", "Green", 0)
 
+        # Đối tượng kẻ địch
         self.enemies = 20
         self.enemy_tank_spawn_timer = gc.TANK_SPAWNING_TIME
         self.enemy_spawn_positions = [gc.Pc1_position, gc.Pc2_position, gc.Pc3_position]
@@ -91,34 +92,36 @@ class Game:
                 key.draw(window)
 
     def create_new_stage(self):
-        
-        #  Retrieves the specific level data
+        #  Xét level hiện tại
         self.current_level_data = self.data.level_data[self.level_num-1]
 
-        #  Number of enemy tanks to spawn in the stage, and this is tracked back to Zero
+        #  Số lượng kẻ địch, giảm dần khi xe tăng địch xuất hiện
         #self.enemies = random.choice([16, 17, 18, 19, 20])
         self.enemies = 5
 
-        #  Track the number of enemies killed back down to zero
+        #  Số lượng kẽ địch bị tiêu diệt
         self.enemies_killed = self.enemies
 
-        #  Load in the level Data
+        #  Load Map
         self.load_level_data(self.current_level_data)
 
-        #  Generating the spawn queue for the computer tanks
+        #  Tạo hàng chờ kẻ địch
         self.generate_spawn_queue()
         self.spawn_pos_index = 0
         self.spawn_queue_index = 0
         print(self.spawn_queue)
 
+        # Tạo vị trí xuất hiện của người chơi
         if self.player1_active:
             self.player1.new_stage_spawn(gc.Pl1_position)
         if self.player2_active:
             self.player2.new_stage_spawn(gc.Pl1_position)
 
     def load_level_data(self, level):
-        """Load the level Data"""
+        # Tạo lưới
         self.grid = []
+
+        #Load ma trận
         for i, row in enumerate(level):
             line = []
             for j, tile in enumerate(row):
@@ -126,36 +129,39 @@ class Game:
                        gc.SCREEN_BORDER_TOP + (i * gc.imageSize // 2))
                 if int(tile) < 0:
                     line.append("   ")
-                elif int(tile) == 123:
+                elif int(tile) == 123: # Load Gạch: 123
                     line.append(f"{tile}")
                     map_tile = BrickTile(pos, self.groups["Destructable_Tiles"], self.assets.brick_tiles)
                     self.groups["Impassable_Tiles"].add(map_tile)
-                elif int(tile) == 234:
+                elif int(tile) == 234: # Load thép: 234
                     line.append(f"{tile}")
                     map_tile = SteelTile(pos, self.groups["Destructable_Tiles"], self.assets.steel_tiles)
                     self.groups["Impassable_Tiles"].add(map_tile)
-                elif int(tile) == 345:
+                elif int(tile) == 345: # Load rừng: 345
                     line.append(f"{tile}")
                     map_tile = ForestTile(pos, self.groups["Forest_Tiles"], self.assets.forest_tiles)
-                elif int(tile) == 456:
+                elif int(tile) == 456: # Load băng: 456
                     line.append(f"{tile}")
                     map_tile = IceTile(pos, self.groups["Ice_Tiles"], self.assets.ice_tiles)
                     self.groups["Impassable_Tiles"].add(map_tile)
-                elif int(tile) == 567:
+                elif int(tile) == 567: # Load nước: 567
                     line.append(f"{tile}")
                     map_tile = WaterTile(pos, self.groups["Water_Tiles"], self.assets.water_tiles)
                     self.groups["Impassable_Tiles"].add(map_tile)
                 else:
                     line.append(f"{tile}")
             self.grid.append(line)
+
+        # Test in map dạng số ra terminal    
         for row in self.grid:
             print(row)
 
     def generate_spawn_queue(self):
-        """Generate a list of tanks that will be spawning during the level"""
+        #Tạo hàng chờ với tỷ lệ dựa trên level hiện tại
         self.spawn_queue_ratios = gc.Tank_spawn_queue[f"queue_{str((self.level_num - 1 % 36) // 3)}"]
         self.spawn_queue = []
 
+        
         for lvl, ratio in enumerate(self.spawn_queue_ratios):
             for i in range(int(round(self.enemies * (ratio / 100)))):
                 self.spawn_queue.append(f"level_{lvl}")
