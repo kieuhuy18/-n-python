@@ -2,11 +2,9 @@ import pygame
 import game_config as gc
 from bullet import Bullet
 
-
 class Tank(pygame.sprite.Sprite):
     def __init__(self, game, assets, groups, position, direction, enemy = True, colour="Silver", tank_level=0):
         super().__init__()
-        #  Các thuộc tính cơ bản
         self.game = game
         self.assets = assets
         self.group = groups
@@ -20,24 +18,26 @@ class Tank(pygame.sprite.Sprite):
         self.tank_images = self.assets.tank_image
         self.spawn_images = self.assets.spawn_star_images
 
-        #  Tank Position and Direction
+        #  Vị trí và hướng của tank
         self.spawn_pos = position
         self.xPos, self.yPos = self.spawn_pos
         self.direction = direction
 
-        #Tank Spawning/ Active
+        # Trạng thái 
         self.active = False
         self.spawning = True
 
-        #  Common Tank Attributes
         self.tank_level = tank_level
         self.colour = colour
         self.tank_speed =gc.TANK_SPEED
 
+        #Kẻ địch
         self.Enemy = enemy
+
+        #Máu của mình
         self.health = 1
 
-        #  Tank Image, Rectangle, and Frame Index
+        #  xét frame
         #Note:
         self.frame_index = 0
         self.image = self.tank_images[f"Tank_{self.tank_level}"][self.colour][self.direction][self.frame_index]

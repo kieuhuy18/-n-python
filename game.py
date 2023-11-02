@@ -29,7 +29,7 @@ class Game:
         self.hud = game_HUD(self, self.assets)
 
         #level
-        self.level_num = 2
+        self.level_num = 1
         self.data = self.main.levels
 
         #  Đối tượng người chơi
@@ -43,24 +43,25 @@ class Game:
         self.enemy_tank_spawn_timer = gc.TANK_SPAWNING_TIME
         self.enemy_spawn_positions = [gc.Pc1_position, gc.Pc2_position, gc.Pc3_position]
 
+        # Khởi tạo map
         self.create_new_stage()
 
         self.end_game = False
 
     def input(self):
-        """Handle inputs for the game when it is running"""
         keypressed = pygame.key.get_pressed()
+
+        #Hoạt động của người chơi
         if self.player1_active:
             self.player1.input(keypressed)
         if self.player2_active:
             self.player2.input(keypressed)
 
-        #  pygame event handler
+
         for event in pygame.event.get():
+            #  Thoát game
             if event.type == pygame.QUIT:
                 self.main.run = False
-
-            #  Keyboard shortcut to quit game
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.end_game = True
@@ -161,14 +162,14 @@ class Game:
         self.spawn_queue_ratios = gc.Tank_spawn_queue[f"queue_{str((self.level_num - 1 % 36) // 3)}"]
         self.spawn_queue = []
 
-        
+        #Dựa trên tỷ lệ tạo hàng chờ kẻ địch
         for lvl, ratio in enumerate(self.spawn_queue_ratios):
             for i in range(int(round(self.enemies * (ratio / 100)))):
                 self.spawn_queue.append(f"level_{lvl}")
         shuffle(self.spawn_queue)
 
     def spawn_enemy_tanks(self):
-        """Spawn enemy tanks, each tank spawns as per the queue"""
+        #Nếu không còn kẻ địch cần xuất hiện, dừng hàm
         if self.enemies == 0:
             return
         
