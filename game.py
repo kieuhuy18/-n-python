@@ -29,7 +29,7 @@ class Game:
         self.hud = game_HUD(self, self.assets)
 
         #level
-        self.level_num = 1
+        self.level_num = 2
         self.data = self.main.levels
 
         #  Đối tượng người chơi

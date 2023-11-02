@@ -95,8 +95,8 @@ class game_HUD:
                 self.player2_lives_image = self.display_player_lives(self.player2_lives, self.player2_active)
 
         if self.level != self.game.level_num:
-            self.level = self.game.level
-            self.level_image = self.display_level(self.level)
+            self.level = self.game.level_num
+            self.level_image = self.display_stage_number(self.game.level_num)
 
     def draw(self, window):
         window.blit(self.hud_overlay, (0, 0))
