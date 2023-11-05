@@ -51,6 +51,7 @@ class Game:
         self.create_new_stage()
 
         self.end_game = False
+        self.game_on = False
 
     def input(self):
         keypressed = pygame.key.get_pressed()
@@ -82,6 +83,10 @@ class Game:
 
         if self.fade.fade_active:
             self.fade.update()
+            if not self.fade.fade_active:
+                for tank in self.groups["All_Tanks"]:
+                    tank.spawn_timer = pygame.time.get_ticks()
+                    return
 
         for dict in self.groups.keys():
             if dict == "Player_Tanks":
@@ -120,6 +125,7 @@ class Game:
         self.load_level_data(self.current_level_data)
 
         self.fade.level = self.level_num
+        self.fade.stage_image = self.fade.create_stage_image()
         self.fade.fade_active = True
 
         #  Tạo hàng chờ kẻ địch
