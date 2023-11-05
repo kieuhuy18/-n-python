@@ -52,12 +52,12 @@ class Tank(pygame.sprite.Sprite):
         # Làm tê liệt tank
         self.paralyzed = False
         self.paralysis = gc.TANK_PARALYSIS
-        self.paralysis_timer = pygame.time.Clock()
+        self.paralysis_timer = pygame.time.get_ticks()
 
         #spawn images
         self.spawn_image = self.spawn_images[f"star_{self.frame_index}"]
         self.spawn_time = pygame.time.get_ticks()
-        self.spawn_ani_time = pygame.time.get_ticks()
+        self.spawn_ani_timer = pygame.time.get_ticks()
 
         self.mask_dict = self.get_various_mask()
         self.mask = self.mask_dict[self.direction]
@@ -68,7 +68,7 @@ class Tank(pygame.sprite.Sprite):
 
     def update(self):
         if self.spawning:
-            if pygame.time.get_ticks() - self.spawn_ani_time >= 50:
+            if pygame.time.get_ticks() - self.spawn_ani_timer >= 50:
                 self.spawn_animation()
             if pygame.time.get_ticks() - self.spawn_time > 2000:
                 self.frame_index = 0
@@ -83,6 +83,7 @@ class Tank(pygame.sprite.Sprite):
     def draw(self, window):
         if self.spawning:
             window.blit(self.spawn_image, self.rect)
+
         #  If the tank is set to active, draw to screen
         if self.active:
             window.blit(self.image, self.rect)
@@ -157,7 +158,7 @@ class Tank(pygame.sprite.Sprite):
         self.frame_index += 1
         self.frame_index = self.frame_index % 4
         self.spawn_image = self.spawn_images[f"star_{self.frame_index}"]
-        spawn_ani_timer = pygame.time.get_ticks()
+        self.spawn_ani_timer = pygame.time.get_ticks()
 
     def tank_collision(self):    
         tank_coll = pygame.sprite.spritecollide(self, self.tank_group, False) #Hàm trả về danh sách các sprite xung đột, luôn có 1 tank trong này

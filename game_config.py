@@ -33,7 +33,6 @@ Pl2_position = (SCREEN_BORDER_LEFT + imageSize//2 * 16, SCREEN_BORDER_TOP + imag
 Pc1_position = (SCREEN_BORDER_LEFT + imageSize//2 * 12, SCREEN_BORDER_TOP + imageSize//2 * 0)
 Pc2_position = (SCREEN_BORDER_LEFT + imageSize//2 * 24, SCREEN_BORDER_TOP + imageSize//2 * 0)
 Pc3_position = (SCREEN_BORDER_LEFT + imageSize//2 * 0, SCREEN_BORDER_TOP + imageSize//2 * 0)
-
 #  Spritesheet images and coordinates
 SPAWN_STAR = {"star_0": [(spriteSize * 16), (spriteSize * 6), spriteSize, spriteSize],
               "star_1": [(spriteSize * 17), (spriteSize * 6), spriteSize, spriteSize],
