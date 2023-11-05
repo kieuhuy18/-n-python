@@ -4,6 +4,7 @@ from characters import Tank, Player
 from game_HUD import game_HUD
 from random import choice, shuffle
 from tile import BrickTile, SteelTile, ForestTile, IceTile, WaterTile
+from fade_animate import Fade
 
 class Game:
     def __init__(self, main, assets, player1 = True, player2 = False):
@@ -29,8 +30,11 @@ class Game:
         self.hud = game_HUD(self, self.assets)
 
         #level
-        self.level_num = 1
+        self.level_num = 4
         self.data = self.main.levels
+
+        #Level fade
+        self.fade = Fade(self, self.assets, 10)
 
         #  Đối tượng người chơi
         if self.player1_active:
@@ -75,6 +79,10 @@ class Game:
                 
     def update(self):
         self.hud.update()
+
+        if self.fade.fade_active:
+            self.fade.update()
+
         for dict in self.groups.keys():
             if dict == "Player_Tanks":
                 continue
@@ -84,13 +92,18 @@ class Game:
         self.spawn_enemy_tanks()
 
     def draw(self, window):
-        """Drawing to the screen"""
         self.hud.draw(window)
+
         for dict in self.groups.keys():
             if dict == "Impassable_Tiles":
                 continue
+            if self.fade.fade_active == True and (dict == "All_Tank" or dict == "Player_Tank"):
+                continue
             for key in self.groups[dict]:
                 key.draw(window)
+            
+        if self.fade.fade_active:
+            self.fade.draw(window)
 
     def create_new_stage(self):
         #  Xét level hiện tại
@@ -105,6 +118,9 @@ class Game:
 
         #  Load Map
         self.load_level_data(self.current_level_data)
+
+        self.fade.level = self.level_num
+        self.fade.fade_active = True
 
         #  Tạo hàng chờ kẻ địch
         self.generate_spawn_queue()

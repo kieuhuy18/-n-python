@@ -27,7 +27,7 @@ class Bullet(pygame.sprite.Sprite):
         self.bullet.add(self)
 
     def move(self):
-        speed = gc.TANK_SPEED * 3
+        speed = gc.TANK_SPEED * 2
         if self.direction == "Up":
             self.yPos -= speed
         elif self.direction == "Down":
