@@ -30,7 +30,7 @@ class Game:
         self.hud = game_HUD(self, self.assets)
 
         #level
-        self.level_num = 5
+        self.level_num = 4
         self.data = self.main.levels
 
         #Level fade
@@ -74,9 +74,10 @@ class Game:
                 if event.key == pygame.K_SPACE:
                     if self.player1_active:
                         self.player1.shoot()
-                if event.key == pygame.K_RETURN:
+                if event.key == pygame.K_RCTRL:
                     if self.player2_active:
                         self.player2.shoot()
+
                 if event.key == pygame.K_RETURN:
                     Tank(self, self.assets, self.groups, (400, 400), "Down")
                     self.enemies -= 1
@@ -89,7 +90,7 @@ class Game:
             if not self.fade.fade_active:
                 for tank in self.groups["All_Tanks"]:
                     tank.spawn_timer = pygame.time.get_ticks()
-                    return
+            return
 
         for dict in self.groups.keys():
             if dict == "Player_Tanks":
@@ -105,7 +106,7 @@ class Game:
         for dict in self.groups.keys():
             if dict == "Impassable_Tiles":
                 continue
-            if self.fade.fade_active == True and (dict == "All_Tank" or dict == "Player_Tank"):
+            if self.fade.fade_active == True and (dict == "All_Tanks" or dict == "Player_Tanks"):
                 continue
             for key in self.groups[dict]:
                 key.draw(window)
@@ -114,7 +115,7 @@ class Game:
             self.fade.draw(window)
 
     def create_new_stage(self):
-        # Đặt các groups ngoại trừ player_tank về zero
+        # Đặt các groups ngoại trừ
         for key, value in self.groups.items():
             if key == "Player_Tanks":
                 continue
@@ -175,6 +176,7 @@ class Game:
                 elif int(tile) == 456: # Load băng: 456
                     line.append(f"{tile}")
                     map_tile = IceTile(pos, self.groups["Ice_Tiles"], self.assets.ice_tiles)
+                    self.groups["Impassable_Tiles"].add(map_tile)
                 elif int(tile) == 567: # Load nước: 567
                     line.append(f"{tile}")
                     map_tile = WaterTile(pos, self.groups["Water_Tiles"], self.assets.water_tiles)
@@ -182,6 +184,10 @@ class Game:
                 else:
                     line.append(f"{tile}")
             self.grid.append(line)
+
+        # Test in map dạng số ra terminal    
+        for row in self.grid:
+            print(row)
 
     def generate_spawn_queue(self):
         #Tạo hàng chờ với tỷ lệ dựa trên level hiện tại
