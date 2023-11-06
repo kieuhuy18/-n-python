@@ -30,7 +30,9 @@ class Game:
         self.hud = game_HUD(self, self.assets)
 
         #level
-        self.level_num = 4
+        self.level_num = 2
+        self.level_complete = False
+        self.level_translation_timer = None
         self.data = self.main.levels
 
         #Level fade
@@ -100,6 +102,17 @@ class Game:
 
         self.spawn_enemy_tanks()
 
+        if self.enemies_killed <= 0 and self.level_complete == False:
+            self.level_complete = True
+            self.level_transition_timer = pygame.time.get_ticks()
+
+        #  Stage Complete, load next stage
+        if self.level_complete:
+            if pygame.time.get_ticks() - self.level_transition_timer >= gc.TRANSITION_TIMER:
+                #self.stage_transition()
+                self.level_num += 1
+                self.create_new_stage()
+
     def draw(self, window):
         self.hud.draw(window)
 
@@ -126,13 +139,14 @@ class Game:
 
         #  Số lượng kẻ địch, giảm dần khi xe tăng địch xuất hiện
         #self.enemies = random.choice([16, 17, 18, 19, 20])
-        self.enemies = 5
+        self.enemies = 3
 
         #  Số lượng kẽ địch bị tiêu diệt
         self.enemies_killed = self.enemies
 
         #  Load Map
         self.load_level_data(self.current_level_data)
+        self.level_complete = False
 
         self.fade.level = self.level_num
         self.fade.stage_image = self.fade.create_stage_image()

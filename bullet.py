@@ -62,14 +62,14 @@ class Bullet(pygame.sprite.Sprite):
 
             if pygame.sprite.collide_mask(self, tank): 
                 #Nếu bắn nhầm đồng đội sẽ khiến đồng đội bị tê liệt
-                if self.owner.Enemy == False and tank.Enemy == False:
+                if self.owner.enemy == False and tank.enemy == False:
                     self.update_owner()
                     tank.paralyze_tank(gc.TANK_PARALYSIS)
                     self.kill()
                     break
             
                 #Bắn trúng địch sẽ tiêu diệt đạn cùng với tank
-                if(self.owner.Enemy == False and tank.Enemy == True) or (self.owner.Enemy == True and tank.Enemy == False):
+                if(self.owner.enemy == False and tank.enemy == True) or (self.owner.enemy == True and tank.enemy == False):
                     self.update_owner()
                     tank.destroy_tank()
                     self.kill()
