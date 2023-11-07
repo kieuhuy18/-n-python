@@ -5,6 +5,7 @@ from game_HUD import game_HUD
 from random import choice, shuffle
 from tile import BrickTile, SteelTile, ForestTile, IceTile, WaterTile
 from fade_animate import Fade
+from score_screen import ScoreScreen
 
 class Game:
     def __init__(self, main, assets, player1 = True, player2 = False):
@@ -37,6 +38,9 @@ class Game:
 
         #Level fade
         self.fade = Fade(self, self.assets, 10)
+
+        # Màn hình điểm số
+        self.score_screen = ScoreScreen(self, self.assets)
 
         #  Đối tượng người chơi
         if self.player1_active:
@@ -109,12 +113,16 @@ class Game:
         #  Stage Complete, load next stage
         if self.level_complete:
             if pygame.time.get_ticks() - self.level_transition_timer >= gc.TRANSITION_TIMER:
-                #self.stage_transition()
-                self.level_num += 1
-                self.create_new_stage()
+                self.stage_transition()
+                # self.level_num += 1
+                # self.create_new_stage()
 
     def draw(self, window):
         self.hud.draw(window)
+
+        if self.score_screen.active:
+            self.score_screen.draw(window)
+            return
 
         for dict in self.groups.keys():
             if dict == "Impassable_Tiles":
@@ -230,4 +238,13 @@ class Game:
             self.spawn_queue_index += 1
             self.enemies -= 1
 
-    
+    def stage_transition(self):
+        if not self.score_screen.active:
+            self.score_screen.timer = pygame.time.get_ticks()
+        self.score_screen.active = True
+        self.score_screen.update()
+
+    def change_level(self):
+        self.level_num += 1
+        self.level_num = self.level_num % len(self.data.level_data)
+        self.create_new_stage()

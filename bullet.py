@@ -71,6 +71,8 @@ class Bullet(pygame.sprite.Sprite):
                 #Bắn trúng địch sẽ tiêu diệt đạn cùng với tank
                 if(self.owner.enemy == False and tank.enemy == True) or (self.owner.enemy == True and tank.enemy == False):
                     self.update_owner()
+                    if not self.owner.enemy:
+                        self.owner.score_list.append(gc.Tank_Criteria[tank.level]["score"])
                     tank.destroy_tank()
                     self.kill()
                     break
