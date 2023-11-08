@@ -24,6 +24,7 @@ class Game:
                        "Impassable_Tiles": pygame.sprite.Group(),
                        "Forest_Tiles": pygame.sprite.Group()}
         
+        self.top_score = 180903
         self.player1_active = player1
         self.p1_score = 0
         self.player2_active = player2
@@ -241,6 +242,7 @@ class Game:
             if self. player2_active:
                 self.score_screen.player_2_score = self.p2_score
                 self.score_screen.player_2_killed = sorted(self.player2.score_list)
+            self.score_screen.update_basic_info(self.top_score, self.level_num)
         self.score_screen.active = True
         self.score_screen.update()
 
