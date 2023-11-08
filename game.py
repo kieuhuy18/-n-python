@@ -25,7 +25,9 @@ class Game:
                        "Forest_Tiles": pygame.sprite.Group()}
         
         self.player1_active = player1
+        self.p1_score = 0
         self.player2_active = player2
+        self.p2_score = 0
 
         #Màn hình Heads-Up Display (hiển thị thông tin của người chơi) (HUD)
         self.hud = game_HUD(self, self.assets)
@@ -203,10 +205,6 @@ class Game:
                     line.append(f"{tile}")
             self.grid.append(line)
 
-        # Test in map dạng số ra terminal    
-        for row in self.grid:
-            print(row)
-
     def generate_spawn_queue(self):
         #Tạo hàng chờ với tỷ lệ dựa trên level hiện tại
         self.spawn_queue_ratios = gc.Tank_spawn_queue[f"queue_{str((self.level_num - 1 % 36) // 3)}"]
@@ -237,10 +235,18 @@ class Game:
     def stage_transition(self):
         if not self.score_screen.active:
             self.score_screen.timer = pygame.time.get_ticks()
+            if self. player1_active:
+                self.score_screen.player_1_score = self.p1_score
+                self.score_screen.player_1_killed = sorted(self.player1.score_list)
+            if self. player2_active:
+                self.score_screen.player_2_score = self.p2_score
+                self.score_screen.player_2_killed = sorted(self.player2.score_list)
         self.score_screen.active = True
         self.score_screen.update()
 
-    def change_level(self):
+    def change_level(self, p1_score, p2_score):
         self.level_num += 1
         self.level_num = self.level_num % len(self.data.level_data)
+        self.p1_score = p1_score
+        self.p2_score = p2_score
         self.create_new_stage()

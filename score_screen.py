@@ -14,18 +14,33 @@ class ScoreScreen:
 
         self.images = self.assets.score_sheet_image
 
+        #  Player Score Totals and Score Lists
+        self.player_1_score = 3000
+        self.player_1_killed = []
+        self.player_2_score = 2500
+        self.player_2_killed = []
+
         self.scoresheet = self.generate_scoresheet_screen()
+        #  Update the player Score images with the latest score
+
+        self.update_player_score_images()
 
     def update(self):
         if not pygame.time.get_ticks() - self.timer >= 10000:
             return
 
         self.active = False
-        self.game.change_level()
+        self.game.change_level(self.player_1_score, self.player_2_score)
 
     def draw(self, window):
         window.fill(gc.BLACK)
         window.blit(self.scoresheet, (0, 0))
+
+        if self.game.player1_active:
+            window.blit(self.pl_1_score, self.pl_1_score_rect)
+
+        if self.game.player2_active:
+            window.blit(self.pl_2_score, self.pl_2_score_rect)
 
     def generate_scoresheet_screen(self):
         """Generate a basic template screen for the score card transition screen"""
@@ -36,7 +51,6 @@ class ScoreScreen:
         surface.blit(self.images["stage"], (new_img * 12, new_img * 6))
 
         arrow_left = self.images["arrow"]
-        # Hàm cho pheop đào ngược hình ảnh của surface vs 3 tham số truyền vào là hình ảnh muốn đảo ngược, đảo ngược theo chiều ngang, đảo ngược theo chiều dọc
         arrow_right = pygame.transform.flip(arrow_left, True, False)
 
         if self.game.player1_active:
@@ -51,7 +65,8 @@ class ScoreScreen:
             if self.game.player2_active:
                 surface.blit(self.images["pts"], (new_img * 26, new_img * yPos))
                 surface.blit(arrow_right, (new_img * 17, new_img * yPos))
-            surface.blit(self.assets.tank_image[f"Tank_{num + 4}"]["Silver"]["Up"][0], (new_img * 15, new_img * (yPos - 0.5)))
+            surface.blit(self.assets.tank_image[f"Tank_{num + 4}"]["Silver"]["Up"][0],
+                         (new_img * 15, new_img * (yPos - 0.5)))
 
         surface.blit(self.images["total"], (new_img * 6, new_img * 22))
         return surface
@@ -66,10 +81,8 @@ class ScoreScreen:
         return score_surface
 
     def update_player_score_images(self):
-        self.pl_1_score = self.number_image(self.p1_score, self.orange_nums)
-        self.pl_1_score_rect = self.pl_1_score.get_rect(
-            topleft=(gc.imageSize//2 * 11 - self.pl_1_score.get_width(), gc.imageSize // 2 * 10))
+        self.pl_1_score = self.number_image(self.player_1_score, self.orange_nums)
+        self.pl_1_score_rect = self.pl_1_score.get_rect(topleft=(gc.imageSize//2 * 11 - self.pl_1_score.get_width(), gc.imageSize // 2 * 10))
 
-        self.pl_2_score = self.number_image(self.p2_score, self.orange_nums)
-        self.pl_2_score_rect = self.pl_2_score.get_rect(
-            topleft=(gc.imageSize // 2 * 29 - self.pl_2_score.get_width(), gc.imageSize // 2 * 10))
+        self.pl_2_score = self.number_image(self.player_2_score, self.orange_nums)
+        self.pl_2_score_rect = self.pl_2_score.get_rect(topleft=(gc.imageSize // 2 * 29 - self.pl_2_score.get_width(), gc.imageSize // 2 * 10))
