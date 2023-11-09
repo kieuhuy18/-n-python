@@ -34,7 +34,7 @@ class Game:
         self.hud = game_HUD(self, self.assets)
 
         #level
-        self.level_num = 2
+        self.level_num = 1
         self.level_complete = False
         self.level_translation_timer = None
         self.data = self.main.levels
@@ -146,7 +146,7 @@ class Game:
 
         #  Số lượng kẻ địch, giảm dần khi xe tăng địch xuất hiện
         #self.enemies = random.choice([16, 17, 18, 19, 20])
-        self.enemies = 3
+        self.enemies = 1
 
         #  Số lượng kẽ địch bị tiêu diệt
         self.enemies_killed = self.enemies

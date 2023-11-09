@@ -37,7 +37,11 @@ class Tank(pygame.sprite.Sprite):
         #  Common Tank Attributes
         self.tank_level = tank_level
         self.colour = colour
-        self.tank_speed = gc.TANK_SPEED
+        self.tank_speed = gc.TANK_SPEED if not self.level else gc.TANK_SPEED * gc.Tank_Criteria[self.level]
+        self.power = 1 if not self.level else gc.Tank_Criteria[self.level]["power"]
+        self.bullet_speed_modifier = 1
+        self.bullet_speed = gc.TANK_SPEED * (3 * self.bullet_speed_modifier)
+        self.score = 100 if not self.level else gc.Tank_Criteria[self.level]["score"]
         self.enemy = enemy
         self.tank_health = 1
 
@@ -50,6 +54,8 @@ class Tank(pygame.sprite.Sprite):
         #  Shoot Cooldowns and Bullet Totals
         self.bullet_limit = 1
         self.bullet_sum = 0
+        self.shot_cooldown_time = 500
+        self.shot_cooldown = pygame.time.get_ticks()
 
         #  Tank paralysis
         self.paralyzed = False
@@ -186,7 +192,7 @@ class Tank(pygame.sprite.Sprite):
 
         for tank in tank_collision:
             #  Skip the tank if it is the current object
-            if tank == self:
+            if tank == self or tank.spawning == True:
                 continue
 
             if self.direction == "Right":
