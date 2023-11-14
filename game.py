@@ -1,6 +1,6 @@
 import pygame
 import game_config as gc
-from characters import Tank, Player
+from characters import EnemyTank, PlayerTank
 from game_HUD import game_HUD
 from random import choice, shuffle
 from tile import BrickTile, SteelTile, ForestTile, IceTile, WaterTile
@@ -47,9 +47,9 @@ class Game:
 
         #  Đối tượng người chơi
         if self.player1_active:
-            self.player1 = Player(self, self.assets, self.groups, gc.Pl1_position, "Up", "Gold", 0)
+            self.player1 = PlayerTank(self, self.assets, self.groups, gc.Pl1_position, "Up", "Gold", 0)
         if self.player2_active:
-            self.player2 = Player(self, self.assets, self.groups, gc.Pl2_position, "Up", "Green", 0)
+            self.player2 = PlayerTank(self, self.assets, self.groups, gc.Pl2_position, "Up", "Green", 0)
 
         # Đối tượng kẻ địch
         self.enemies = 20
@@ -226,7 +226,7 @@ class Game:
         if pygame.time.get_ticks() - self.enemy_tank_spawn_timer >= gc.TANK_SPAWNING_TIME:
             position = self.enemy_spawn_positions[self.spawn_pos_index % 3]
             tank_level = gc.Tank_Criteria[self.spawn_queue[self.spawn_queue_index % len(self.spawn_queue)]]["image"]
-            Tank(self, self.assets, self.groups, position, "Down", True, "Silver", tank_level)
+            EnemyTank(self, self.assets, self.groups, position, "Down", "Silver", tank_level)
             #  Reset the enemy tank spawn timer
             self.enemy_tank_spawn_timer = pygame.time.get_ticks()
             self.spawn_pos_index += 1

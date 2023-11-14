@@ -1,6 +1,8 @@
 import pygame
 from bullet import Bullet
+import random
 import game_config as gc
+
 
 class Tank(pygame.sprite.Sprite):
     def __init__(self, game, assets, groups, position, direction, enemy=True, colour="Silver", tank_level=0):
@@ -17,9 +19,9 @@ class Tank(pygame.sprite.Sprite):
         #  Add tank object to the sprite group
         self.tank_group.add(self)
 
+        #  Enemy Tank Criteria Dict
         levels = {0: None, 4: "level_0", 5: "level_1", 6: "level_2", 7: "level_3"}
-        if enemy:
-            self.level = levels[tank_level]
+        self.level = levels[tank_level]
 
         #  Tank Images
         self.tank_images = self.assets.tank_image
@@ -37,7 +39,7 @@ class Tank(pygame.sprite.Sprite):
         #  Common Tank Attributes
         self.tank_level = tank_level
         self.colour = colour
-        self.tank_speed = gc.TANK_SPEED if not self.level else gc.TANK_SPEED * gc.Tank_Criteria[self.level]
+        self.tank_speed = gc.TANK_SPEED if not self.level else gc.TANK_SPEED * gc.Tank_Criteria[self.level]["speed"]
         self.power = 1 if not self.level else gc.Tank_Criteria[self.level]["power"]
         self.bullet_speed_modifier = 1
         self.bullet_speed = gc.TANK_SPEED * (3 * self.bullet_speed_modifier)
@@ -83,10 +85,15 @@ class Tank(pygame.sprite.Sprite):
             if pygame.time.get_ticks() - self.spawn_anim_timer >= 50:
                 self.spawn_animation()
             #  if total spawn timer seconds passed, change self.spawning.
+
             if pygame.time.get_ticks() - self.spawn_timer > 2000:
-                self.frame_index = 0
-                self.spawning = False
-                self.active = True
+                colliding_sprites = pygame.sprite.spritecollide(self, self.tank_group, False)
+                if len(colliding_sprites) == 1:
+                    self.frame_index = 0
+                    self.spawning = False
+                    self.active = True
+                else:
+                    self.spawn_star_collision(colliding_sprites)
             return
 
         if self.paralyzed:
@@ -183,7 +190,6 @@ class Tank(pygame.sprite.Sprite):
             images.setdefault(direction, pygame.mask.from_surface(image_to_mask))
         return images
 
-    #  Tank Collisions
     def tank_on_tank_collisions(self):
         """Check if the tank collides with another tank"""
         tank_collision = pygame.sprite.spritecollide(self, self.tank_group, False)
@@ -214,7 +220,6 @@ class Tank(pygame.sprite.Sprite):
                 if self.rect.bottom >= tank.rect.top and \
                     self.rect.left < tank.rect.right and self.rect.right > tank.rect.left:
                     self.rect.bottom = tank.rect.top
-                    self.yPos = self.rect.y
 
     def tank_collisions_with_obstacles(self):
         """Perform collision checks with tank and obstacles"""
@@ -237,7 +242,19 @@ class Tank(pygame.sprite.Sprite):
                     self.rect.top = obstacle.rect.bottom
                     self.yPos = self.rect.y
 
-    #  Tank Shooting
+    def spawn_star_collision(self, colliding_sprites):
+        """Fixes infinite spawn bug if two spawn stars are colliding"""
+        for tank in colliding_sprites:
+            if tank.active:
+                return
+        for tank in colliding_sprites:
+            if tank == self:
+                continue
+            if self.spawning and tank.spawning:
+                self.frame_index = 0
+                self.spawning = False
+                self.active = True
+
     def shoot(self):
         if self.bullet_sum >= self.bullet_limit:
             return
@@ -261,16 +278,21 @@ class Tank(pygame.sprite.Sprite):
             self.game.enemies_killed -= 1
             return
 
-class Player(Tank):
+class PlayerTank(Tank):
     def __init__(self, game, assets, groups, position, direction, colour, tank_level):
         super().__init__(game, assets, groups, position, direction, False, colour, tank_level)
         self.player_group.add(self)
         #  Player Lives
         self.lives = 3
+        #  Player Dead / Game Over
+        self.dead = False
+        self.game_over = False
+        #  Level Score Tracking
         self.score_list = []
 
     def input(self, keypressed):
-        """Move the player tanks"""
+        if self.game_over or self.dead:
+            return
         if self.colour == "Gold":
             if keypressed[pygame.K_w]:
                 self.move_tank("Up")
@@ -291,6 +313,30 @@ class Player(Tank):
             elif keypressed[pygame.K_RIGHT]:
                 self.move_tank("Right")
 
+    def update(self):
+        if self.game_over:
+            return
+        super().update()
+
+    def draw(self, window):
+        if self.game_over:
+            return
+        super().draw(window)
+
+    def shoot(self):
+        if self.game_over:
+            return
+        super().shoot()
+
+    def destroy_tank(self):
+        if self.dead or self.game_over:
+            return
+        self.dead = True
+        self.lives -= 1
+        if self.lives <= 0:
+            self.game_over = True
+        self.respawn_tank()
+
     def new_stage_spawn(self, spawn_pos):
         self.tank_group.add(self)
         self.spawning = True
@@ -300,3 +346,34 @@ class Player(Tank):
         self.image = self.tank_images[f"Tank_{self.tank_level}"][self.colour][self.direction][self.frame_index]
         self.rect.topleft = (self.xPos, self.yPos)
         self.score_list.clear()
+
+    def respawn_tank(self):
+        self.spawning = True
+        self.active = False
+        self.spawn_timer = pygame.time.get_ticks()
+        self.direction = "Up"
+        self.xPos, self.yPos = self.spawn_pos
+        self.image = self.tank_images[f"Tank_{self.tank_level}"][self.colour][self.direction][self.frame_index]
+        self.rect = self.image.get_rect(topleft=(self.spawn_pos))
+        self.mask = self.mask_dict[self.direction]
+        self.dead = False
+
+class EnemyTank(Tank):
+    def __init__(self, game, assets, groups, pos, dir, colour, tank_lvl):
+        super().__init__(game, assets, groups, pos, dir, True, colour, tank_lvl)
+        self.time_between_shots = random.choice([300, 600, 900])
+        self.shot_timer = pygame.time.get_ticks()
+
+    def ai_shooting(self):
+        if self.paralyzed:
+            return
+        if self.bullet_sum < self.bullet_limit:
+            if pygame.time.get_ticks() - self.shot_timer >= self.time_between_shots:
+                self.shoot()
+                self.shot_timer = pygame.time.get_ticks()
+
+    def update(self):
+        super().update()
+        if self.spawning:
+            return
+        self.ai_shooting()
