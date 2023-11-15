@@ -3,6 +3,11 @@ from bullet import Bullet
 import random
 import game_config as gc
 
+class MyRect(pygame.sprite.Sprite):
+    def __init__(self, x, y, width, height):
+        super().__init__()
+        self.image = None
+        self.rect = pygame.Rect(x, y, width, height)
 
 class Tank(pygame.sprite.Sprite):
     def __init__(self, game, assets, groups, position, direction, enemy=True, colour="Silver", tank_level=0):
@@ -364,16 +369,78 @@ class EnemyTank(Tank):
         self.time_between_shots = random.choice([300, 600, 900])
         self.shot_timer = pygame.time.get_ticks()
 
+        self.dir_rec = {
+            "Left": MyRect(self.xPos - (self.width//2), self.yPos, self.width//2, self.height),
+            "Right": MyRect(self.xPos + self.width, self.yPos, self.width//2, self.height),
+            "Up": MyRect(self.xPos, self.yPos - (self.height//2), self.width, self.height//2),
+            "Down": MyRect(self.xPos, self.yPos + self.height, self.width, self.height//2)
+        }
+
+        self.move_directions = []
+        self.change_direction_timer = pygame.time.get_ticks()
+        self.game_screen_rect = MyRect(gc.GAME_SCREEN[0], gc.GAME_SCREEN[1], gc.GAME_SCREEN[2], gc.GAME_SCREEN[3])
+
     def ai_shooting(self):
         if self.paralyzed:
             return
         if self.bullet_sum < self.bullet_limit:
             if pygame.time.get_ticks() - self.shot_timer >= self.time_between_shots:
                 self.shoot()
-                self.shot_timer = pygame.time.get_ticks()
+                self.shot_timer = pygame.time.get_ticks()    
+
+    def ai_move(self, direction):
+        super().move_tank(direction)
+        self.dir_rec["Left"].rect.update(self.xPos - (self.width//2), self.yPos, self.width//2, self.height)
+        self.dir_rec["Right"].rect.update(self.xPos + self.width, self.yPos, self.width//2, self.height)
+        self.dir_rec["Up"].rect.update(self.xPos, self.yPos - (self.height//2), self.width, self.height//2)
+        self.dir_rec["Down"].rect.update(self.xPos, self.yPos + self.height, self.width, self.height//2)
+
+    def ai_move_direction(self):
+        directional_list_copy = self.move_directions.copy()
+
+        #Kiểm tra thời gian giữa các lần thay đổi hướng
+        if pygame.time.get_ticks() - self.change_direction_timer <= 750:
+            return
+
+        for key, value in self.dir_rec.items():
+            #Kiểm tra key nằm trong screen 
+            if pygame.Rect.contains(self.game_screen_rect.rect, value):
+                #  kiểm tra key va chạm với impassable_tiles
+                obst = pygame.sprite.spritecollideany(value, self.groups["Impassable_Tiles"])
+                if not obst:
+                    if key not in directional_list_copy:
+                        directional_list_copy.append(key)
+                elif obst:
+                    #  If there is collision, check that rect is contained by obstacle
+                    if value.rect.contains(obst.rect) and key in directional_list_copy:
+                        directional_list_copy.remove(key)
+                    else:
+                        if key in directional_list_copy and key != self.direction:
+                            directional_list_copy.remove(key)
+
+                tank = pygame.sprite.spritecollideany(value, self.groups["All_Tanks"])
+                if tank:
+                    if key in directional_list_copy:
+                        directional_list_copy.remove(key)
+            else:
+                if key in directional_list_copy:
+                    directional_list_copy.remove(key)
+
+        if self.move_directions != directional_list_copy or (self.direction not in directional_list_copy):
+            self.move_directions = directional_list_copy.copy()
+            if len(self.move_directions) > 0:
+                self.direction = random.choice(self.move_directions)
+            self.change_direction_timer = pygame.time.get_ticks()
 
     def update(self):
         super().update()
         if self.spawning:
             return
+        self.ai_move(self.direction)
+        self.ai_move_direction()
         self.ai_shooting()
+
+    def draw(self, window):
+        super().draw(window)
+        for value in self.dir_rec.values():
+            pygame.draw.rect(window, gc.GREEN, value.rect, 2)
