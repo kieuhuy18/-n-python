@@ -6,6 +6,7 @@ from random import choice, shuffle
 from tile import BrickTile, SteelTile, ForestTile, IceTile, WaterTile
 from fade_animate import Fade
 from score_screen import ScoreScreen
+from eagle import Eagle
 
 class Game:
     def __init__(self, main, assets, player1 = True, player2 = False):
@@ -22,6 +23,7 @@ class Game:
                        "Bullets": pygame.sprite.Group(),
                        "Destructable_Tiles": pygame.sprite.Group(),
                        "Impassable_Tiles": pygame.sprite.Group(),
+                       "Eagle": pygame.sprite.GroupSingle(),
                        "Explosion": pygame.sprite.Group(),
                        "Forest_Tiles": pygame.sprite.Group()}
         
@@ -154,6 +156,7 @@ class Game:
 
         #  Load Map
         self.load_level_data(self.current_level_data)
+        self.eagle = Eagle(self, self.assets, self.groups)
         self.level_complete = False
 
         self.fade.level = self.level_num

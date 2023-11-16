@@ -1,5 +1,6 @@
 import pygame
 import game_config as gc
+from explosions import Explosion
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, groups, owner, pos, direction, assets):
@@ -41,6 +42,7 @@ class Bullet(pygame.sprite.Sprite):
     def collide_edge_of_screen(self):
         #Kiểm tra đường viền
         if self.rect.top <= gc.SCREEN_BORDER_TOP or self.rect.bottom >= gc.SCREEN_BORDER_BOTTOM or self.rect.left <= gc.SCREEN_BORDER_LEFT or self.rect.right >= gc.SCREEN_BORDER_RIGHT:
+            Explosion(self.assets, self.group, self.rect.center, 1)
             self.update_owner()
             #Nếu va chạm sẽ hủy bỏ đối tượng
             self.kill()
@@ -65,6 +67,7 @@ class Bullet(pygame.sprite.Sprite):
                 if self.owner.enemy == False and tank.enemy == False:
                     self.update_owner()
                     tank.paralyze_tank(gc.TANK_PARALYSIS)
+                    Explosion(self.assets, self.group, self.rect.center, 1)
                     self.kill()
                     break
             
@@ -74,6 +77,7 @@ class Bullet(pygame.sprite.Sprite):
                     if not self.owner.enemy:
                         self.owner.score_list.append(gc.Tank_Criteria[tank.level]["score"])
                     tank.destroy_tank()
+                    Explosion(self.assets, self.group, self.rect.center, 1)
                     self.kill()
                     break
 
@@ -82,6 +86,7 @@ class Bullet(pygame.sprite.Sprite):
         obstacle_collide = pygame.sprite.spritecollide(self, self.group["Destructable_Tiles"], False)
         for obstacle in obstacle_collide:
             obstacle.hit_by_bullet(self)
+            Explosion(self.assets, self.group, self.rect.center, 1)
 
     def collision_bullet(self):
         Bullet_hit = pygame.sprite.spritecollide(self, self.bullet, False)
@@ -108,7 +113,15 @@ class Bullet(pygame.sprite.Sprite):
         self.collide_tank()
         self.collision_bullet()
         self.collision_with_obstacle()
+        self.base_collision()
 
     def draw(self, window):
         window.blit(self.image, self.rect)
         #pygame.draw.rect(window, gc.GREEN, self.rect, 1)
+
+    def base_collision(self):
+        if self.rect.colliderect(self.group["Eagle"].sprite.rect):
+            Explosion(self.assets, self.group, self.rect.center, 1)
+            self.update_owner()
+            self.group["Eagle"].sprite.destroy_base()
+            self.kill()
