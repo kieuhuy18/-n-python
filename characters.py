@@ -2,6 +2,7 @@ import pygame
 from bullet import Bullet
 import random
 import game_config as gc
+from explosions import Explosion
 
 class MyRect(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height):
@@ -310,7 +311,7 @@ class Tank(pygame.sprite.Sprite):
         #  If health reaches zero, destroy tank
         if self.tank_health <= 0:
             self.kill()
-            #Explosion(self.assets, self.groups, self.rect.center, 5, self.score)
+            Explosion(self.assets, self.groups, self.rect.center, 5)
             #self.assets.channel_explosion_sound.play(self.assets.explosion_sound)
             self.game.enemies_killed -= 1
             return
@@ -327,7 +328,7 @@ class PlayerTank(Tank):
         super().__init__(game, assets, groups, position, direction, False, colour, tank_level)
         self.player_group.add(self)
         #  Player Lives
-        self.lives = 1
+        self.lives = 5
         #  Player Dead / Game Over
         self.dead = False
         self.game_over = False
@@ -396,7 +397,7 @@ class PlayerTank(Tank):
             self.mask_dict = self.get_various_masks()
             self.mask = self.mask_dict[self.direction]
             return
-        #Explosion(self.assets, self.groups, self.rect.center, 5, 0)
+        Explosion(self.assets, self.groups, self.rect.center, 5)
         #self.assets.channel_explosion_sound.play(self.assets.explosion_sound)
         self.dead = True
         self.lives -= 1
@@ -501,6 +502,7 @@ class EnemyTank(Tank):
             if len(self.move_directions) > 0:
                 self.direction = random.choice(self.move_directions)
             self.change_direction_timer = pygame.time.get_ticks()
+
 
     def update(self):
         super().update()

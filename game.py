@@ -22,6 +22,7 @@ class Game:
                        "Bullets": pygame.sprite.Group(),
                        "Destructable_Tiles": pygame.sprite.Group(),
                        "Impassable_Tiles": pygame.sprite.Group(),
+                       "Explosion": pygame.sprite.Group(),
                        "Forest_Tiles": pygame.sprite.Group()}
         
         self.top_score = 180903
@@ -34,7 +35,7 @@ class Game:
         self.hud = game_HUD(self, self.assets)
 
         #level
-        self.level_num = 8
+        self.level_num = 3
         self.level_complete = False
         self.level_translation_timer = None
         self.data = self.main.levels
