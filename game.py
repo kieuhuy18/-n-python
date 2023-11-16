@@ -7,6 +7,7 @@ from tile import BrickTile, SteelTile, ForestTile, IceTile, WaterTile
 from fade_animate import Fade
 from score_screen import ScoreScreen
 from eagle import Eagle
+from gameover import GameOver
 
 class Game:
     def __init__(self, main, assets, player1 = True, player2 = False):
@@ -44,6 +45,7 @@ class Game:
 
         #Level fade
         self.fade = Fade(self, self.assets, 10)
+        self.game_over_screen = GameOver(self, self.assets)
 
         # Màn hình điểm số
         self.score_screen = ScoreScreen(self, self.assets)
@@ -64,6 +66,7 @@ class Game:
 
         self.end_game = False
         self.game_on = False
+        self.game_over = False
 
     def input(self):
         keypressed = pygame.key.get_pressed()
@@ -93,11 +96,30 @@ class Game:
     def update(self):
         self.hud.update()
 
+        if self.game_over_screen.active:
+            self.game_over_screen.update()
+
         if self.fade.fade_active:
             self.fade.update()
             if not self.fade.fade_active:
                 for tank in self.groups["All_Tanks"]:
                     tank.spawn_timer = pygame.time.get_ticks()
+            return
+        
+        if not self.game_over:
+            if self.player1_active and self.player2_active:
+                if self.player1.game_over and self.player2.game_over and not self.game_over_screen.active:
+                    self.groups["All_Tanks"].empty()
+                    self.game_over = True
+                    self.game_over_screen.activate()
+                    return
+            if self.player1.game_over:
+                self.groups["All_Tanks"].empty()
+                self.game_over = True
+                self.game_over_screen.activate()
+                return
+        elif self.game_over and not self.end_game and not self.game_over_screen.active:
+            self.stage_transition(True)
             return
 
         for dict in self.groups.keys():
@@ -136,6 +158,9 @@ class Game:
             
         if self.fade.fade_active:
             self.fade.draw(window)
+
+        if self.game_over_screen.active:
+            self.game_over_screen.draw(window)
 
     def create_new_stage(self):
         # Đặt các groups ngoại trừ
@@ -239,7 +264,7 @@ class Game:
             self.spawn_queue_index += 1
             self.enemies -= 1
 
-    def stage_transition(self):
+    def stage_transition(self, game_over):
         if not self.score_screen.active:
             self.score_screen.timer = pygame.time.get_ticks()
             if self. player1_active:
@@ -250,7 +275,7 @@ class Game:
                 self.score_screen.player_2_killed = sorted(self.player2.score_list)
             self.score_screen.update_basic_info(self.top_score, self.level_num)
         self.score_screen.active = True
-        self.score_screen.update()
+        self.score_screen.update(game_over)
 
     def change_level(self, p1_score, p2_score):
         self.level_num += 1
