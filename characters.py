@@ -469,7 +469,7 @@ class EnemyTank(Tank):
 
     def ai_move_direction(self):
         directional_list_copy = self.move_directions.copy()
-        if pygame.time.get_ticks() - self.change_direction_timer <= 750:
+        if pygame.time.get_ticks() - self.change_direction_timer <= 250:
             return
 
         for key, value in self.dir_rec.items():
@@ -502,7 +502,6 @@ class EnemyTank(Tank):
             if len(self.move_directions) > 0:
                 self.direction = random.choice(self.move_directions)
             self.change_direction_timer = pygame.time.get_ticks()
-
 
     def update(self):
         super().update()

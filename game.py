@@ -35,7 +35,7 @@ class Game:
         self.hud = game_HUD(self, self.assets)
 
         #level
-        self.level_num = 3
+        self.level_num = 1
         self.level_complete = False
         self.level_translation_timer = None
         self.data = self.main.levels
@@ -226,7 +226,10 @@ class Game:
         if pygame.time.get_ticks() - self.enemy_tank_spawn_timer >= gc.TANK_SPAWNING_TIME:
             position = self.enemy_spawn_positions[self.spawn_pos_index % 3]
             tank_level = gc.Tank_Criteria[self.spawn_queue[self.spawn_queue_index % len(self.spawn_queue)]]["image"]
-            EnemyTank(self, self.assets, self.groups, position, "Down", "Silver", tank_level)
+            if tank_level == 7:
+                EnemyTank(self, self.assets, self.groups, position, "Down", "Special", tank_level)
+            else:
+                EnemyTank(self, self.assets, self.groups, position, "Down", "Silver", tank_level)
             #  Reset the enemy tank spawn timer
             self.enemy_tank_spawn_timer = pygame.time.get_ticks()
             self.spawn_pos_index += 1
