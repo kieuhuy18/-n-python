@@ -57,7 +57,7 @@ class ScoreScreen:
 
         if pygame.time.get_ticks() - self.score_timer >= 3000:
             if game_over:
-                self.game_end_game = True
+                self.game.end_game = True
                 return
             self.active = False
             self.game.change_level(self.player_1_score, self.player_2_score)
