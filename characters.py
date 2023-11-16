@@ -50,7 +50,7 @@ class Tank(pygame.sprite.Sprite):
         self.bullet_speed = gc.TANK_SPEED * (3 * self.bullet_speed_modifier)
         self.score = 100 if not self.level else gc.Tank_Criteria[self.level]["score"]
         self.enemy = enemy
-        self.tank_health = 1
+        self.tank_health = 1 if not self.level else gc.Tank_Criteria[self.level]["health"]
 
         #  Tank Image, Rectangle, and Frame Index
         self.frame_index = 0
@@ -68,6 +68,9 @@ class Tank(pygame.sprite.Sprite):
         self.paralyzed = False
         self.paralysis = gc.TANK_PARALYSIS
         self.paralysis_timer = pygame.time.get_ticks()
+
+        #  Amphibious
+        self.amphibious = False
 
         #  Spawn images
         self.spawn_image = self.spawn_images[f"star_{self.frame_index}"]
@@ -140,22 +143,34 @@ class Tank(pygame.sprite.Sprite):
 
         if direction == "Up":
             self.yPos -= self.tank_speed
-            self.xPos = self.grid_alignment_movement(self.xPos)
+            if not self.enemy:
+                self.xPos = self.grid_alignment_movement(self.xPos)
+            else: 
+                self.xPos = self.xPos
             if self.yPos < gc.SCREEN_BORDER_TOP:
                 self.yPos = gc.SCREEN_BORDER_TOP
         elif direction == "Down":
             self.yPos += self.tank_speed
-            self.xPos = self.grid_alignment_movement(self.xPos)
+            if not self.enemy:
+                self.xPos = self.grid_alignment_movement(self.xPos)
+            else: 
+                self.xPos = self.xPos
             if self.yPos + self.height > gc.SCREEN_BORDER_BOTTOM:
                 self.yPos = gc.SCREEN_BORDER_BOTTOM - self.height
         elif direction == "Left":
             self.xPos -= self.tank_speed
-            self.yPos = self.grid_alignment_movement(self.yPos)
+            if not self.enemy:
+                self.yPos = self.grid_alignment_movement(self.yPos)
+            else: 
+                self.yPos = self.yPos
             if self.xPos < gc.SCREEN_BORDER_LEFT:
                 self.xPos = gc.SCREEN_BORDER_LEFT
         elif direction == "Right":
             self.xPos += self.tank_speed
-            self.yPos = self.grid_alignment_movement(self.yPos)
+            if not self.enemy:
+                self.yPos = self.grid_alignment_movement(self.yPos)
+            else: 
+                self.yPos = self.yPos
             if self.xPos + self.width > gc.SCREEN_BORDER_RIGHT:
                 self.xPos = gc.SCREEN_BORDER_RIGHT - self.width
 
@@ -167,6 +182,8 @@ class Tank(pygame.sprite.Sprite):
         self.tank_on_tank_collisions()
         #  Check for tank collisions with obstacles
         self.tank_collisions_with_obstacles()
+        #  Check for tank collision with Base
+        #self.base_collision()
 
     #  Tank Animations
     def tank_movement_animation(self):
@@ -195,6 +212,7 @@ class Tank(pygame.sprite.Sprite):
             images.setdefault(direction, pygame.mask.from_surface(image_to_mask))
         return images
 
+    #  Tank Collisions
     def tank_on_tank_collisions(self):
         """Check if the tank collides with another tank"""
         tank_collision = pygame.sprite.spritecollide(self, self.tank_group, False)
@@ -225,11 +243,14 @@ class Tank(pygame.sprite.Sprite):
                 if self.rect.bottom >= tank.rect.top and \
                     self.rect.left < tank.rect.right and self.rect.right > tank.rect.left:
                     self.rect.bottom = tank.rect.top
+                    self.yPos = self.rect.y
 
     def tank_collisions_with_obstacles(self):
         """Perform collision checks with tank and obstacles"""
         wall_collision = pygame.sprite.spritecollide(self, self.groups["Impassable_Tiles"], False)
         for obstacle in wall_collision:
+            if obstacle in self.groups["Water_Tiles"] and self.amphibious == True:
+                continue
             if self.direction == "Right":
                 if self.rect.right >= obstacle.rect.left:
                     self.rect.right = obstacle.rect.left
@@ -260,11 +281,20 @@ class Tank(pygame.sprite.Sprite):
                 self.spawning = False
                 self.active = True
 
+    # def base_collision(self):
+    #     """If base is driven over by a tank"""
+    #     if not self.groups["Eagle"].sprite.active:
+    #         return
+    #     if self.rect.colliderect(self.groups["Eagle"].sprite.rect):
+    #         self.groups["Eagle"].sprite.destroy_base()
+
+    #  Tank Shooting
     def shoot(self):
         if self.bullet_sum >= self.bullet_limit:
             return
 
         bullet = Bullet(self.groups, self, self.rect.center, self.direction, self.assets)
+        #self.assets.channel_fire_sound.play(self.assets.fire_sound)
         self.bullet_sum += 1
 
     #  Actions affecting tanks
@@ -280,22 +310,35 @@ class Tank(pygame.sprite.Sprite):
         #  If health reaches zero, destroy tank
         if self.tank_health <= 0:
             self.kill()
+            #Explosion(self.assets, self.groups, self.rect.center, 5, self.score)
+            #self.assets.channel_explosion_sound.play(self.assets.explosion_sound)
             self.game.enemies_killed -= 1
             return
+
+        if self.tank_health == 3:
+            self.colour = "Green"
+        elif self.tank_health == 2:
+            self.colour = "Gold"
+        elif self.tank_health == 1:
+            self.colour = "Silver"
 
 class PlayerTank(Tank):
     def __init__(self, game, assets, groups, position, direction, colour, tank_level):
         super().__init__(game, assets, groups, position, direction, False, colour, tank_level)
         self.player_group.add(self)
         #  Player Lives
-        self.lives = 3
+        self.lives = 1
         #  Player Dead / Game Over
         self.dead = False
         self.game_over = False
         #  Level Score Tracking
         self.score_list = []
 
+        #self.movement_sound = self.assets.movement_sound
+        self.player_movement_channel = pygame.mixer.Channel(0)
+
     def input(self, keypressed):
+        """Move the player tanks"""
         if self.game_over or self.dead:
             return
         if self.colour == "Gold":
@@ -321,12 +364,19 @@ class PlayerTank(Tank):
     def update(self):
         if self.game_over:
             return
+
         super().update()
 
     def draw(self, window):
         if self.game_over:
             return
         super().draw(window)
+
+    def move_tank(self, direction):
+        if self.spawning:
+            return
+        #self.player_movement_channel.play(self.movement_sound)
+        super().move_tank(direction)
 
     def shoot(self):
         if self.game_over:
@@ -336,6 +386,18 @@ class PlayerTank(Tank):
     def destroy_tank(self):
         if self.dead or self.game_over:
             return
+        if self.tank_health > 1:
+            self.tank_health = 1
+            self.tank_level = 0
+            self.power = 1
+            self.amphibious = False
+            self.image = self.tank_images[f"Tank_{self.tank_level}"][self.colour][self.direction][self.frame_index]
+            self.rect = self.image.get_rect(topleft=(self.xPos, self.yPos))
+            self.mask_dict = self.get_various_masks()
+            self.mask = self.mask_dict[self.direction]
+            return
+        #Explosion(self.assets, self.groups, self.rect.center, 5, 0)
+        #self.assets.channel_explosion_sound.play(self.assets.explosion_sound)
         self.dead = True
         self.lives -= 1
         if self.lives <= 0:
@@ -346,6 +408,7 @@ class PlayerTank(Tank):
         self.tank_group.add(self)
         self.spawning = True
         self.active = False
+        self.shield_start = True
         self.direction = "Up"
         self.xPos, self.yPos = spawn_pos
         self.image = self.tank_images[f"Tank_{self.tank_level}"][self.colour][self.direction][self.frame_index]
@@ -356,10 +419,18 @@ class PlayerTank(Tank):
         self.spawning = True
         self.active = False
         self.spawn_timer = pygame.time.get_ticks()
+        self.shield_start = True
         self.direction = "Up"
+        self.tank_level = 0
+        self.power = 1
+        self.amphibious = False
+        self.bullet_speed_modifier = 1
+        self.bullet_speed = gc.TANK_SPEED * (3 * self.bullet_speed_modifier)
+        self.bullet_limit = 1
         self.xPos, self.yPos = self.spawn_pos
         self.image = self.tank_images[f"Tank_{self.tank_level}"][self.colour][self.direction][self.frame_index]
         self.rect = self.image.get_rect(topleft=(self.spawn_pos))
+        self.mask_dict = self.get_various_masks()
         self.mask = self.mask_dict[self.direction]
         self.dead = False
 
@@ -386,7 +457,7 @@ class EnemyTank(Tank):
         if self.bullet_sum < self.bullet_limit:
             if pygame.time.get_ticks() - self.shot_timer >= self.time_between_shots:
                 self.shoot()
-                self.shot_timer = pygame.time.get_ticks()    
+                self.shot_timer = pygame.time.get_ticks()
 
     def ai_move(self, direction):
         super().move_tank(direction)
@@ -397,17 +468,16 @@ class EnemyTank(Tank):
 
     def ai_move_direction(self):
         directional_list_copy = self.move_directions.copy()
-
-        #Kiểm tra thời gian giữa các lần thay đổi hướng
         if pygame.time.get_ticks() - self.change_direction_timer <= 750:
             return
 
         for key, value in self.dir_rec.items():
-            #Kiểm tra key nằm trong screen 
+            #  Check to make sure the retangle is Within the game screen
             if pygame.Rect.contains(self.game_screen_rect.rect, value):
-                #  kiểm tra key va chạm với impassable_tiles
+                #  Check for any collision with impassable tiles
                 obst = pygame.sprite.spritecollideany(value, self.groups["Impassable_Tiles"])
                 if not obst:
+                    #  Check if direction is already in directions list
                     if key not in directional_list_copy:
                         directional_list_copy.append(key)
                 elif obst:
