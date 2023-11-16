@@ -291,6 +291,9 @@ class Tank(pygame.sprite.Sprite):
 
     #  Tank Shooting
     def shoot(self):
+        if self.spawning:
+            return
+
         if self.bullet_sum >= self.bullet_limit:
             return
 

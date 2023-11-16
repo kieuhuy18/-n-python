@@ -38,7 +38,7 @@ class Game:
         self.hud = game_HUD(self, self.assets)
 
         #level
-        self.level_num = 1
+        self.level_num = 9
         self.level_complete = False
         self.level_translation_timer = None
         self.data = self.main.levels
@@ -57,7 +57,7 @@ class Game:
             self.player2 = PlayerTank(self, self.assets, self.groups, gc.Pl2_position, "Up", "Green", 0)
 
         # Đối tượng kẻ địch
-        self.enemies = 20
+        self.enemies = 5
         self.enemy_tank_spawn_timer = gc.TANK_SPAWNING_TIME
         self.enemy_spawn_positions = [gc.Pc1_position, gc.Pc2_position, gc.Pc3_position]
 
@@ -137,9 +137,7 @@ class Game:
         #  Stage Complete, load next stage
         if self.level_complete:
             if pygame.time.get_ticks() - self.level_transition_timer >= gc.TRANSITION_TIMER:
-                self.stage_transition()
-                # self.level_num += 1
-                # self.create_new_stage()
+                self.stage_transition(self.game_over)
 
     def draw(self, window):
         self.hud.draw(window)
