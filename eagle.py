@@ -32,4 +32,5 @@ class Eagle(pygame.sprite.Sprite):
         self.active = False
         self.image = self.assets.flag["Phoenix_Destroyed"]
         Explosion(self.assets, self.group, self.rect.center, 5)
+        self.assets.channel_explosion_sound.play(self.assets.explosion_sound)
         self.timer = pygame.time.get_ticks()

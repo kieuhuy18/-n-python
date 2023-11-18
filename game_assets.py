@@ -51,6 +51,33 @@ class GameAssets:
         for image in ["hiScore", "arrow", "player1", "player2", "pts", "stage", "total"]:
             self.score_sheet_image[image] = self.load_img(image)
 
+        self.game_start_sound = pygame.mixer.Sound("assets/sound/tet.mp3")
+        self.channel_game_start_sound = pygame.mixer.Channel(0)
+
+        self.fire_sound = pygame.mixer.Sound("assets/sound/fire.ogg")
+        self.fire_sound.set_volume(1)
+        self.channel_fire_sound = pygame.mixer.Channel(1)
+
+        self.brick_sound = pygame.mixer.Sound("assets/sound/brick.ogg")
+        self.channel_brick_sound = pygame.mixer.Channel(2)
+
+        self.steel_sound = pygame.mixer.Sound("assets/sound/steel.ogg")
+        self.channel_steel_sound = pygame.mixer.Channel(3)
+
+        self.explosion_sound = pygame.mixer.Sound("assets/sound/explosion.ogg")
+        self.channel_explosion_sound = pygame.mixer.Channel(4)
+
+        self.bonus_sound = pygame.mixer.Sound("assets/sound/bonus.ogg")
+        self.channel_bonus_sound = pygame.mixer.Channel(5)
+
+        self.gameover_sound = pygame.mixer.Sound("assets/sound/gameover.ogg")
+        self.channel_gameover_sound = pygame.mixer.Channel(6)
+
+        self.start_sound = pygame.mixer.Sound("assets/sound/gamestart.ogg")
+        self.channel_start_sound = pygame.mixer.Channel(7)
+
+        self.score_sound = pygame.mixer.Sound("assets/sound/score.ogg")
+
     #Hàm lấy ra dictionary gồm tất cả ảnh của tank
     def _load_all_tank_images(self):
         #Nếu khai báo thủ công thì sẽ có dạng như sau:

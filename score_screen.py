@@ -45,6 +45,7 @@ class ScoreScreen:
             if pygame.time.get_ticks() - self.timer >= 100:
                 score = self.player_1_killed.pop(0)
                 self.update_score(score, "player1")
+                self.assets.score_sound.play()
                 self.score_timer = pygame.time.get_ticks()
                 return
 
@@ -52,6 +53,7 @@ class ScoreScreen:
             if pygame.time.get_ticks() - self.timer >= 100:
                 score = self.player_2_killed.pop(0)
                 self.update_score(score, "player2")
+                self.assets.score_sound.play()
                 self.score_timer = pygame.time.get_ticks()
                 return
 

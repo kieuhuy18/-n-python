@@ -43,8 +43,8 @@ class Bullet(pygame.sprite.Sprite):
         #Kiểm tra đường viền
         if self.rect.top <= gc.SCREEN_BORDER_TOP or self.rect.bottom >= gc.SCREEN_BORDER_BOTTOM or self.rect.left <= gc.SCREEN_BORDER_LEFT or self.rect.right >= gc.SCREEN_BORDER_RIGHT:
             Explosion(self.assets, self.group, self.rect.center, 1)
+            self.assets.channel_steel_sound.play(self.assets.steel_sound)
             self.update_owner()
-            #Nếu va chạm sẽ hủy bỏ đối tượng
             self.kill()
 
     # countdown số đạn bằng bullet_sum, cho bullet_sum = 0, khi bắn +1, nếu va chạm sẽ giảm xuống 1
@@ -85,6 +85,10 @@ class Bullet(pygame.sprite.Sprite):
         #Load mảng có thể phá hủy vào hàm
         obstacle_collide = pygame.sprite.spritecollide(self, self.group["Destructable_Tiles"], False)
         for obstacle in obstacle_collide:
+            if obstacle.name == "Brick":
+                self.assets.channel_brick_sound.play(self.assets.brick_sound)
+            if obstacle.name == "Steel":
+                self.assets.channel_steel_sound.play(self.assets.steel_sound)   
             obstacle.hit_by_bullet(self)
             Explosion(self.assets, self.group, self.rect.center, 1)
 

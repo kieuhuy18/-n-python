@@ -11,7 +11,6 @@ from gameover import GameOver
 
 class Game:
     def __init__(self, main, assets, player1 = True, player2 = False):
-
         #  Các thuộc tính cơ bản
         self.main = main
         self.assets = assets
@@ -111,16 +110,19 @@ class Game:
                 if self.player1.game_over and self.player2.game_over and not self.game_over_screen.active:
                     self.groups["All_Tanks"].empty()
                     self.game_over = True
+                    self.assets.channel_gameover_sound.play(self.assets.game_over_sound)
                     self.game_over_screen.activate()
                     return
             elif self.player1_active and not self.player2_active and not self.game_over_screen.active:
                 if self.player1.game_over:
                     self.groups["All_Tanks"].empty()
                     self.game_over = True
+                    self.assets.channel_gameover_sound.play(self.assets.gameover_sound)
                     self.game_over_screen.activate()
                     return
         elif self.game_over and not self.end_game and not self.game_over_screen.active:
             self.stage_transition(True)
+            self.assets.channel_gameover_sound.play(self.assets.game_over_sound)
             return
 
         for dict in self.groups.keys():
@@ -182,6 +184,8 @@ class Game:
         self.load_level_data(self.current_level_data)
         self.eagle = Eagle(self, self.assets, self.groups)
         self.level_complete = False
+
+        self.assets.channel_start_sound.play(self.assets.start_sound)
 
         self.fade.level = self.level_num
         self.fade.stage_image = self.fade.create_stage_image()

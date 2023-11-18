@@ -60,6 +60,7 @@ class StartScreen:
             return
         self.start_screen_active = True
 
+
     def draw(self, window):
         window.blit(self.image, self.rect)
         if self.start_screen_active:

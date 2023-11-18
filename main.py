@@ -12,6 +12,7 @@ class MainGame:
     def __init__(self):
         #Khởi tạo game
         pygame.init()
+        pygame.mixer.init()
 
         #Khởi tạo các thành phần cơ bản của game
         self.screen = pygame.display.set_mode((gc.SCREENWIDTH, gc.SCREENHEIGHT))
@@ -26,6 +27,7 @@ class MainGame:
         #Màn hình bắt đầu
         self.start_screen = StartScreen(self, self.assets)
         self.start_screen_active = True
+        self.assets.channel_game_start_sound.play(self.assets.game_start_sound)\
 
         #Chế độ game
         self.game_on = False
@@ -67,6 +69,9 @@ class MainGame:
         #Load màn hình chính
         if self.start_screen_active:
             self.start_screen.update()
+
+        if not self.start_screen_active:
+            self.assets.channel_game_start_sound.stop()   
 
         #Load Game
         if self.game_on:

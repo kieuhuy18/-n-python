@@ -300,7 +300,7 @@ class Tank(pygame.sprite.Sprite):
             return
 
         bullet = Bullet(self.groups, self, self.rect.center, self.direction, self.assets)
-        #self.assets.channel_fire_sound.play(self.assets.fire_sound)
+        self.assets.channel_fire_sound.play(self.assets.fire_sound)
         self.bullet_sum += 1
 
     #  Actions affecting tanks
@@ -317,7 +317,7 @@ class Tank(pygame.sprite.Sprite):
         if self.tank_health <= 0:
             self.kill()
             Explosion(self.assets, self.groups, self.rect.center, 5)
-            #self.assets.channel_explosion_sound.play(self.assets.explosion_sound)
+            self.assets.channel_explosion_sound.play(self.assets.explosion_sound)
             self.game.enemies_killed -= 1
             return
 
@@ -339,9 +339,6 @@ class PlayerTank(Tank):
         self.game_over = False
         #  Level Score Tracking
         self.score_list = []
-
-        #self.movement_sound = self.assets.movement_sound
-        self.player_movement_channel = pygame.mixer.Channel(0)
 
     def input(self, keypressed):
         """Move the player tanks"""
