@@ -57,7 +57,7 @@ class Game:
             self.player2 = PlayerTank(self, self.assets, self.groups, gc.Pl2_position, "Up", "Green", 0)
 
         # Đối tượng kẻ địch
-        self.enemies = 5
+        #self.enemies = 5
         self.enemy_tank_spawn_timer = gc.TANK_SPAWNING_TIME
         self.enemy_spawn_positions = [gc.Pc1_position, gc.Pc2_position, gc.Pc3_position]
 
@@ -173,7 +173,7 @@ class Game:
 
         #  Số lượng kẻ địch, giảm dần khi xe tăng địch xuất hiện
         #self.enemies = random.choice([16, 17, 18, 19, 20])
-        self.enemies = 10
+        self.enemies = 2
 
         #  Số lượng kẽ địch bị tiêu diệt
         self.enemies_killed = self.enemies

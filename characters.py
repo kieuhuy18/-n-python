@@ -333,7 +333,7 @@ class PlayerTank(Tank):
         super().__init__(game, assets, groups, position, direction, False, colour, tank_level)
         self.player_group.add(self)
         #  Player Lives
-        self.lives = 5
+        self.lives = 1
         #  Player Dead / Game Over
         self.dead = False
         self.game_over = False
