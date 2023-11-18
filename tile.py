@@ -74,6 +74,8 @@ class ForestTile(TileType):
 class IceTile(ForestTile):
     def __init__(self, pos, group, map_tile):
         super().__init__(pos, group, map_tile)
+        self._get_rect_and_size((self.xPos, self.yPos))
+
 class WaterTile(TileType):
     def __init__(self, pos, group, map_tile):
         super().__init__(pos, group, map_tile)

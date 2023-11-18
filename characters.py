@@ -70,8 +70,7 @@ class Tank(pygame.sprite.Sprite):
         self.paralysis = gc.TANK_PARALYSIS
         self.paralysis_timer = pygame.time.get_ticks()
 
-        #  Amphibious
-        self.amphibious = False
+        self.di = None
 
         #  Spawn images
         self.spawn_image = self.spawn_images[f"star_{self.frame_index}"]
@@ -117,8 +116,7 @@ class Tank(pygame.sprite.Sprite):
         #  If the tank is set to active, draw to screen
         if self.active:
             window.blit(self.image, self.rect)
-            #window.blit(self.mask_image, self.rect)
-            pygame.draw.rect(window, gc.RED, self.rect, 1)
+            #pygame.draw.rect(window, gc.RED, self.rect, 1)
 
     #  Tank movement
     def grid_alignment_movement(self, pos):
@@ -186,6 +184,8 @@ class Tank(pygame.sprite.Sprite):
         #  Check for tank collision with Base
         self.base_collision()
 
+        #if pygame.Rect.contains(self.groups["Ice_Tiles"], self.rect):
+
     #  Tank Animations
     def tank_movement_animation(self):
         """update the animation images to simulate the tank moving"""
@@ -249,8 +249,10 @@ class Tank(pygame.sprite.Sprite):
     def tank_collisions_with_obstacles(self):
         """Perform collision checks with tank and obstacles"""
         wall_collision = pygame.sprite.spritecollide(self, self.groups["Impassable_Tiles"], False)
+        ice_collision = pygame.sprite.spritecollide(self, self.groups["Ice_Tiles"], False)
+
         for obstacle in wall_collision:
-            if obstacle in self.groups["Water_Tiles"] and self.amphibious == True:
+            if obstacle in self.groups["Water_Tiles"]:
                 continue
             if self.direction == "Right":
                 if self.rect.right >= obstacle.rect.left:
@@ -345,6 +347,7 @@ class PlayerTank(Tank):
         """Move the player tanks"""
         if self.game_over or self.dead:
             return
+
         if self.colour == "Gold":
             if keypressed[pygame.K_w]:
                 self.move_tank("Up")
@@ -427,7 +430,6 @@ class PlayerTank(Tank):
         self.direction = "Up"
         self.tank_level = 0
         self.power = 1
-        self.amphibious = False
         self.bullet_speed_modifier = 1
         self.bullet_speed = gc.TANK_SPEED * (3 * self.bullet_speed_modifier)
         self.bullet_limit = 1
@@ -516,5 +518,5 @@ class EnemyTank(Tank):
 
     def draw(self, window):
         super().draw(window)
-        for value in self.dir_rec.values():
-            pygame.draw.rect(window, gc.GREEN, value.rect, 2)
+        # for value in self.dir_rec.values():
+        #     pygame.draw.rect(window, gc.GREEN, value.rect, 2)

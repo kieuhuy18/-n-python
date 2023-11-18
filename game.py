@@ -38,7 +38,7 @@ class Game:
         self.hud = game_HUD(self, self.assets)
 
         #level
-        self.level_num = 9
+        self.level_num = 1
         self.level_complete = False
         self.level_translation_timer = None
         self.data = self.main.levels
@@ -113,11 +113,12 @@ class Game:
                     self.game_over = True
                     self.game_over_screen.activate()
                     return
-            if self.player1.game_over:
-                self.groups["All_Tanks"].empty()
-                self.game_over = True
-                self.game_over_screen.activate()
-                return
+            elif self.player1_active and not self.player2_active and not self.game_over_screen.active:
+                if self.player1.game_over:
+                    self.groups["All_Tanks"].empty()
+                    self.game_over = True
+                    self.game_over_screen.activate()
+                    return
         elif self.game_over and not self.end_game and not self.game_over_screen.active:
             self.stage_transition(True)
             return
