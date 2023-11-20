@@ -1,21 +1,27 @@
+#Kích thước ảnh
 spriteSize = 16
 spriteScale = 4
 imageSize = spriteSize * spriteScale
 
+#Kích thước màn hình
 SCREENWIDTH = 16 * imageSize
 SCREENHEIGHT = 14 * imageSize
 
+#Thông tin cho HUD
 GAME_SCREEN = (imageSize, imageSize // 2, imageSize * 13, imageSize * 13)
 Info_x, Info_y = SCREENWIDTH - (imageSize * 2), imageSize // 2
 Enemies = 20
 
+#Đường border của màn hình
 SCREEN_BORDER_LEFT = GAME_SCREEN[0]
 SCREEN_BORDER_TOP = GAME_SCREEN[1]
 SCREEN_BORDER_RIGHT = GAME_SCREEN[2] + SCREEN_BORDER_LEFT
 SCREEN_BORDER_BOTTOM = GAME_SCREEN[3] + SCREEN_BORDER_TOP
 
+#Tốc độ của hoạt ảnh trên màn hình bắt đầu
 SCREEN_SCROLL_SPEED = 5
 
+#Thời gian chờ giữa các màn
 TRANSITION_TIMER = 3000
 
 FPS = 60
@@ -25,17 +31,21 @@ RED = (255, 0, 0)
 GREY = (99, 99, 99)
 GREEN = (0, 255 , 0)
 
+#Thông tin của tank
 TANK_SPEED = imageSize // spriteSize
 TANK_PARALYSIS = 2000
 TANK_SPAWNING_TIME = 3000
 
+#Vị trí của người chơi
 Pl1_position = (SCREEN_BORDER_LEFT + imageSize//2 * 8, SCREEN_BORDER_TOP + imageSize//2 * 24)
 Pl2_position = (SCREEN_BORDER_LEFT + imageSize//2 * 16, SCREEN_BORDER_TOP + imageSize//2 * 24)
 
+#Vị trí của tank địch
 Pc1_position = (SCREEN_BORDER_LEFT + imageSize//2 * 12, SCREEN_BORDER_TOP + imageSize//2 * 0)
 Pc2_position = (SCREEN_BORDER_LEFT + imageSize//2 * 24, SCREEN_BORDER_TOP + imageSize//2 * 0)
 Pc3_position = (SCREEN_BORDER_LEFT + imageSize//2 * 0, SCREEN_BORDER_TOP + imageSize//2 * 0)
-#  Spritesheet images and coordinates
+
+# Hình ảnh và tọa đỗ của các phần tử trong spritesheet battlecity
 SPAWN_STAR = {"star_0": [(spriteSize * 16), (spriteSize * 6), spriteSize, spriteSize],
               "star_1": [(spriteSize * 17), (spriteSize * 6), spriteSize, spriteSize],
               "star_2": [(spriteSize * 18), (spriteSize * 6), spriteSize, spriteSize],
@@ -102,6 +112,7 @@ NUMS = {
 CONTEXT = {"pause": [(16 * 18), (16 * 11), 40, 8],
            "game_over": [(16 * 18), (16 * 11) + 8, 32, 16]}
 
+#Vị trí spawn của địch, player, căn cứ và rào quanh căn cứ ở trên lưới
 ENEMY_TANK_SPAWNS = [(0, 0), (0, 1), (1, 0), (1, 1),    # Enemy spawn 1
                      (12, 0), (12, 1), (13, 0), (13, 1), # Enemy spawn 2
                      (24, 0), (24, 1), (25, 0), (25, 1)] # Enemy Spawn 3
@@ -109,8 +120,10 @@ PLAYER_TANK_SPAWNS = [(8, 24), (8, 25), (9, 24), (9, 25),   # player 1 spawn
                       (16, 24), (16, 25), (17, 24), (17, 25)] # player 2 spawn
 BASE = [(12, 24), (12, 25), (13, 24), (13, 25)] # base
 FORT = [(11, 25), (11, 24), (11, 23), (12, 23), (13, 23), (14, 23), (14, 24), (14, 25)]
+
 FLAG_POSITION = (SCREEN_BORDER_LEFT + imageSize//2 * 12, SCREEN_BORDER_TOP + imageSize//2 * 24 )
 
+#Thông tin của tank địch ở các cấp độ khác nhau
 Tank_Criteria = {
     "level_0": {"image": 4, "health": 1, "speed": 0.5, "cooldown": 1, "power": 1, "score": 100},
     "level_1": {"image": 5, "health": 1, "speed": 0.75, "cooldown": 1, "power": 1, "score": 200},
@@ -118,6 +131,7 @@ Tank_Criteria = {
     "level_3": {"image": 7, "health": 4, "speed": 0.5, "cooldown": 1, "power": 2, "score": 400},
 }
 
+#Tỷ lệ xuất hiện tank level của các màn khác nhau
 Tank_spawn_queue = {"queue_0": [90, 10, 0, 0],
                     "queue_1": [80, 20, 0, 0],
                     "queue_2": [0, 0, 0, 100],

@@ -18,6 +18,7 @@ class Eagle(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(gc.FLAG_POSITION))
 
     def update(self):
+        #đoạn game over 
         if not self.active and (pygame.time.get_ticks() - self.timer >= 750):
             if self.game.player1_active:
                 self.game.player1.game_over = True
@@ -28,7 +29,6 @@ class Eagle(pygame.sprite.Sprite):
         window.blit(self.image, self.rect)
 
     def destroy_base(self):
-        """Sets this object to be inactive"""
         self.active = False
         self.image = self.assets.flag["Phoenix_Destroyed"]
         Explosion(self.assets, self.group, self.rect.center, 5)

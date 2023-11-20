@@ -88,7 +88,8 @@ class Bullet(pygame.sprite.Sprite):
             if obstacle.name == "Brick":
                 self.assets.channel_brick_sound.play(self.assets.brick_sound)
             if obstacle.name == "Steel":
-                self.assets.channel_steel_sound.play(self.assets.steel_sound)   
+                self.assets.channel_steel_sound.play(self.assets.steel_sound)
+            #Xử lý va chạm với vật cản   
             obstacle.hit_by_bullet(self)
             Explosion(self.assets, self.group, self.rect.center, 1)
 
@@ -103,7 +104,7 @@ class Bullet(pygame.sprite.Sprite):
             if bullet == self:
                 continue
 
-            #Hủy 2 viện đan c=khi chúng va chạm với nhau
+            #Hủy 2 viện đan khi chúng va chạm với nhau
             if pygame.sprite.collide_mask(self, bullet):
                 bullet.update_owner()
                 bullet.kill()

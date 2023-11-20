@@ -27,6 +27,7 @@ class Game:
                        "Explosion": pygame.sprite.Group(),
                        "Forest_Tiles": pygame.sprite.Group()}
         
+        #Điểm số 
         self.top_score = 180903
         self.player1_active = player1
         self.p1_score = 0
@@ -40,10 +41,13 @@ class Game:
         self.level_num = 1
         self.level_complete = False
         self.level_translation_timer = None
+
+        #gắn map đã được load trong main sang biến data
         self.data = self.main.levels
 
-        #Level fade
+        #Level fade (hoạt ảnh)
         self.fade = Fade(self, self.assets, 10)
+
         self.game_over_screen = GameOver(self, self.assets)
 
         # Màn hình điểm số
@@ -55,8 +59,7 @@ class Game:
         if self.player2_active:
             self.player2 = PlayerTank(self, self.assets, self.groups, gc.Pl2_position, "Up", "Green", 0)
 
-        # Đối tượng kẻ địch
-        #self.enemies = 5
+        # Thời gian và vị trí kẻ địch xuấ hiện
         self.enemy_tank_spawn_timer = gc.TANK_SPAWNING_TIME
         self.enemy_spawn_positions = [gc.Pc1_position, gc.Pc2_position, gc.Pc3_position]
 
@@ -85,6 +88,7 @@ class Game:
                 if event.key == pygame.K_ESCAPE:
                     self.end_game = True
                 
+                #Bắn 
                 if event.key == pygame.K_SPACE:
                     if self.player1_active:
                         self.player1.shoot()
@@ -93,24 +97,30 @@ class Game:
                         self.player2.shoot()
                 
     def update(self):
+        #Load HUD
         self.hud.update()
 
+        #Load game over
         if self.game_over_screen.active:
             self.game_over_screen.update()
 
+        #Load hoạt cảnh fade
         if self.fade.fade_active:
             self.fade.update()
+
+            #Chạy thời gian xe tank xuất hiện
             if not self.fade.fade_active:
                 for tank in self.groups["All_Tanks"]:
                     tank.spawn_timer = pygame.time.get_ticks()
             return
         
+        #Load game over
         if not self.game_over:
             if self.player1_active and self.player2_active:
                 if self.player1.game_over and self.player2.game_over and not self.game_over_screen.active:
                     self.groups["All_Tanks"].empty()
                     self.game_over = True
-                    self.assets.channel_gameover_sound.play(self.assets.game_over_sound)
+                    self.assets.channel_gameover_sound.play(self.assets.gameover_sound)
                     self.game_over_screen.activate()
                     return
             elif self.player1_active and not self.player2_active and not self.game_over_screen.active:
@@ -122,22 +132,25 @@ class Game:
                     return
         elif self.game_over and not self.end_game and not self.game_over_screen.active:
             self.stage_transition(True)
-            self.assets.channel_gameover_sound.play(self.assets.game_over_sound)
+            self.assets.channel_gameover_sound.play(self.assets.gameover_sound)
             return
 
+        #Load các dict trong group trừ player tank
         for dict in self.groups.keys():
             if dict == "Player_Tanks":
                 continue
             for key in self.groups[dict]:
                 key.update()
-
+        
+        #Xuất hiện tank địch
         self.spawn_enemy_tanks()
 
+        #Hoàn thành màn chơi
         if self.enemies_killed <= 0 and self.level_complete == False:
             self.level_complete = True
             self.level_transition_timer = pygame.time.get_ticks()
 
-        #  Stage Complete, load next stage
+        # Xuất ra màn hình điểm sau khi xog màn chơi
         if self.level_complete:
             if pygame.time.get_ticks() - self.level_transition_timer >= gc.TRANSITION_TIMER:
                 self.stage_transition(self.game_over)
@@ -149,9 +162,12 @@ class Game:
             self.score_screen.draw(window)
             return
 
+        # Vẽ các thành phần trong group lên màn hình
         for dict in self.groups.keys():
+            # bỏ qua Impassable_Tiles vì nếu vẽ group này lên màn thì phần tử nước sẽ được vẽ 2 lần lên màn
             if dict == "Impassable_Tiles":
                 continue
+            # if này sẽ làm cho tank xuất hiện sau khi fade kết thúc
             if self.fade.fade_active == True and (dict == "All_Tanks" or dict == "Player_Tanks"):
                 continue
             for key in self.groups[dict]:
@@ -164,18 +180,18 @@ class Game:
             self.game_over_screen.draw(window)
 
     def create_new_stage(self):
-        # Đặt các groups ngoại trừ
+        # Làm trống các groups ngoại trừ player tank
         for key, value in self.groups.items():
             if key == "Player_Tanks":
                 continue
             value.empty()
 
-        #  Xét level hiện tại
+        #  lưu vào biến danh sách các phần tử trong map
         self.current_level_data = self.data.level_data[self.level_num-1]
 
         #  Số lượng kẻ địch, giảm dần khi xe tăng địch xuất hiện
         #self.enemies = random.choice([16, 17, 18, 19, 20])
-        self.enemies = 2
+        self.enemies = 4
 
         #  Số lượng kẽ địch bị tiêu diệt
         self.enemies_killed = self.enemies
@@ -212,7 +228,7 @@ class Game:
             line = []
             for j, tile in enumerate(row):
                 pos = (gc.SCREEN_BORDER_LEFT + (j * gc.imageSize // 2),
-                       gc.SCREEN_BORDER_TOP + (i * gc.imageSize // 2))
+                       gc.SCREEN_BORDER_TOP + (i * gc.imageSize // 2)) # -> chia 2 để mỗi ô là 1 lưới 4x4 nhỏ, dễ dàng thêm các phần tử small
                 if int(tile) < 0:
                     line.append("   ")
                 elif int(tile) == 123: # Load Gạch: 123
@@ -236,6 +252,8 @@ class Game:
                 else:
                     line.append(f"{tile}")
             self.grid.append(line)
+        for row in self.grid:
+            print(row)
 
     def generate_spawn_queue(self):
         #Tạo hàng chờ với tỷ lệ dựa trên level hiện tại
@@ -267,22 +285,31 @@ class Game:
             self.spawn_queue_index += 1
             self.enemies -= 1
 
+    #hàm chờ giữa màn
     def stage_transition(self, game_over):
+        #reset thời gian
         if not self.score_screen.active:
             self.score_screen.timer = pygame.time.get_ticks()
+            #hiển thị điểm của 2 người chơi
             if self. player1_active:
                 self.score_screen.player_1_score = self.p1_score
                 self.score_screen.player_1_killed = sorted(self.player1.score_list)
             if self. player2_active:
                 self.score_screen.player_2_score = self.p2_score
                 self.score_screen.player_2_killed = sorted(self.player2.score_list)
+            #Khởi tạo lại điểm
             self.score_screen.update_basic_info(self.top_score, self.level_num)
         self.score_screen.active = True
         self.score_screen.update(game_over)
 
     def change_level(self, p1_score, p2_score):
+        #tăng level 
         self.level_num += 1
         self.level_num = self.level_num % len(self.data.level_data)
+
+        #gán điểm của người chơi vào biến cố định
         self.p1_score = p1_score
         self.p2_score = p2_score
+
+        #tạo màn mới
         self.create_new_stage()

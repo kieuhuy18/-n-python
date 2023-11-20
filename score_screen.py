@@ -1,7 +1,6 @@
 import pygame
 import game_config as gc
 
-
 class ScoreScreen:
     def __init__(self, game, assets):
         self.game = game
@@ -15,7 +14,7 @@ class ScoreScreen:
 
         self.images = self.assets.score_sheet_image
 
-        #  Player Score Totals and Score Lists
+        #  Điểm của người chơi và list kẻ địch bị tiêu giệt
         self.player_1_score = 0
         self.player_1_killed = []
         self.player_2_score = 0
@@ -26,8 +25,9 @@ class ScoreScreen:
 
         self.scoresheet = self.generate_scoresheet_screen()
 
-        self._create_top_score_and_stage_number_images()
-        #  Update the player Score images with the latest score
+        self.create_top_score_and_stage_number_images()
+
+        #  Cập nhật điểm của người chơi
         self.update_player_score_images()
 
         #  Line 1 : [Number of Tanks, Tank Score Number]
@@ -84,22 +84,26 @@ class ScoreScreen:
             for value in self.p2_tank_score_imgs.values():
                 window.blit(value[0], value[1])
 
+    # Tạo màn hình điểm cơ bản
     def generate_scoresheet_screen(self):
-        """Generate a basic template screen for the score card transition screen"""
+        #Tạo màn hình đen và hiện chữ hiScore và stage
         surface = pygame.Surface((gc.SCREENWIDTH, gc.SCREENHEIGHT))
         surface.fill(gc.BLACK)
         new_img = gc.imageSize // 2
         surface.blit(self.images["hiScore"], (new_img * 8, new_img * 4))
         surface.blit(self.images["stage"], (new_img * 12, new_img * 6))
 
+        #Hiện 2 mũi tên
         arrow_left = self.images["arrow"]
         arrow_right = pygame.transform.flip(arrow_left, True, False)
 
+        #Hiện thông tin người chơi đang hoạt động
         if self.game.player1_active:
             surface.blit(self.images["player1"], (new_img * 3, new_img * 8))
         if self.game.player2_active:
             surface.blit(self.images["player2"], (new_img * 21, new_img * 8))
 
+        #In ra thông tin kẻ địch bị tiêu diệt theo từng dòng với vị trí cụ thể
         for num, yPos in enumerate([12.5, 15, 17.5, 20]):
             if self.game.player1_active:
                 surface.blit(self.images["pts"], (new_img * 8, new_img * yPos))
@@ -109,12 +113,13 @@ class ScoreScreen:
                 surface.blit(arrow_right, (new_img * 17, new_img * yPos))
             surface.blit(self.assets.tank_image[f"Tank_{num + 4}"]["Silver"]["Up"][0],
                          (new_img * 15, new_img * (yPos - 0.5)))
-
+        
+        #Hiện ra chữ total
         surface.blit(self.images["total"], (new_img * 6, new_img * 22))
         return surface
 
+    # đổi số sang dạng hình ảnh surface
     def number_image(self, score, number_color):
-        """Convert a number into an image"""
         num = str(score)
         length = len(num)
         score_surface = pygame.Surface((gc.imageSize//2 * length, gc.imageSize // 2))
@@ -129,7 +134,7 @@ class ScoreScreen:
         self.pl_2_score = self.number_image(self.player_2_score, self.orange_nums)
         self.pl_2_score_rect = self.pl_2_score.get_rect(topleft=(gc.imageSize // 2 * 29 - self.pl_2_score.get_width(), gc.imageSize // 2 * 10))
 
-    def _create_top_score_and_stage_number_images(self):
+    def create_top_score_and_stage_number_images(self):
         self.hi_score_nums_total = self.number_image(self.top_score, self.orange_nums)
         self.hi_score_nums_rect = self.hi_score_nums_total.get_rect(
             topleft=(gc.imageSize//2 * 19, gc.imageSize // 2 * 4))
@@ -140,25 +145,24 @@ class ScoreScreen:
     def update_basic_info(self, top_score, stage_number):
         self.top_score = top_score
         self.stage = stage_number
-        self._create_top_score_and_stage_number_images()
+        self.create_top_score_and_stage_number_images()
 
     def generate_tank_kill_images(self, x1, x2, pl_dict):
-        """Generate a dictionary of images and x/y coords for values"""
+        # Truyền vị trí x1 x2 là vị trí của 2 số trên màn hình
         yPos = [12.5, 15, 17.5, 20]
         size = gc.imageSize // 2
 
-        #  Generate the number images for the tank numbers
+        # Tạo số tank địch bị giết và total
         tank_num_imgs = {}
         for i in range(4):
             tank_num_imgs[f"line{i+1}"] = []
             tank_num_imgs[f"line{i + 1}"].append(self.number_image(pl_dict[f"line{i+1}"][0], self.white_nums))
-            tank_num_imgs[f"line{i + 1}"].append(
-                (size * x1 - tank_num_imgs[f"line{i + 1}"][0].get_width(), size * yPos[i]))
+            tank_num_imgs[f"line{i + 1}"].append((size * x1 - tank_num_imgs[f"line{i + 1}"][0].get_width(), size * yPos[i]))
         tank_num_imgs["total"] = []
         tank_num_imgs["total"].append(self.number_image(pl_dict["total"], self.white_nums))
         tank_num_imgs["total"].append((size * x1 - tank_num_imgs["total"][0].get_width(), size * 22.5))
 
-        # generate Images for tank score per line
+        # tạo số điểm
         tank_score_imgs = {}
         for i in range(4):
             tank_score_imgs[f"line{i+1}"] = []
@@ -168,21 +172,20 @@ class ScoreScreen:
         return tank_num_imgs, tank_score_imgs
     
     def update_score(self, score, player):
+        # Điểm và số lượng của từng tank
         score_dict = {100: "line1", 200: "line2", 300: "line3", 400: "line4"}
         if player == "player1":
             self.pl1_score_values[score_dict[score]][0] += 1
             self.pl1_score_values[score_dict[score]][1] += score
             self.pl1_score_values["total"] += 1
             self.player_1_score += score
-            self.p1_tank_num_imgs, self.p1_tank_score_imgs = self.generate_tank_kill_images(
-                14, 7, self.pl1_score_values)
+            self.p1_tank_num_imgs, self.p1_tank_score_imgs = self.generate_tank_kill_images(14, 7, self.pl1_score_values)
         else:
             self.pl2_score_values[score_dict[score]][0] += 1
             self.pl2_score_values[score_dict[score]][1] += score
             self.pl2_score_values["total"] += 1
             self.player_2_score += score
-            self.p2_tank_num_imgs, self.p2_tank_score_imgs = self.generate_tank_kill_images(
-                20, 25, self.pl2_score_values)
+            self.p2_tank_num_imgs, self.p2_tank_score_imgs = self.generate_tank_kill_images(20, 25, self.pl2_score_values)
         self.update_player_score_images()
 
     def clear_for_new_stage(self):

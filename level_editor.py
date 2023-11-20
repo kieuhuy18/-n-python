@@ -8,6 +8,7 @@ class LevelEditor:
         self.assets = assets
         self.active = True
 
+        #Lấy dữ liệu từ trong file add vào mảng
         self.level_data = LevelData()
         self.all_levels = []
         for stage in self.level_data.level_data:
@@ -16,33 +17,38 @@ class LevelEditor:
         self.overlay_screen = self.draw_screen()
         self.matrix = self.create_level_matrix()
 
+        #Gắn 1 con số tọa độ cho các phần tử khác nhau trên map
         self.tile_type = {
             123: self.assets.brick_tiles["small"], 234: self.assets.steel_tiles["small"],
             345: self.assets.forest_tiles["small"], 456: self.assets.ice_tiles["small"],
             567: self.assets.water_tiles["small_1"], 999: self.assets.flag["Phoenix_Alive"]
         }
+
+        #Dữ liệu của các phần tử dựa theo các con số
         self.inserts = [
-            [-1, -1, -1, -1],       #  Empty Square
-            [-1, 123, -1, 123],     #  Right Vertical brick
-            [-1, -1, 123, 123],     #  Bottom Row brick
-            [123, -1, 123, -1],     #  Left Vertical brick
-            [123, 123, -1, -1],     #  Top Row brick
-            [123, 123, 123, 123],   #  Full brick
-            [-1, 234, -1, 234],     #  Steel Tiles Right Vert
-            [-1, -1, 234, 234],     #  Steel tile Boottom Row
-            [234, -1, 234, -1],     #  Steel Tile Left Vert
-            [234, 234, -1, -1],     #  Steel Tile Top Row
-            [234, 234, 234, 234],   #  Steel tile Full block
-            [345, 345, 345, 345],   #  Full block Forest Tile
-            [456, 456, 456, 456],   #  Full block ice Tile
-            [567, 567, 567, 567],   #  Full Block Water Tile
+            [-1, -1, -1, -1],       #Rỗng
+            [-1, 123, -1, 123],     #Miếng gạch bên phải
+            [-1, -1, 123, 123],     #Miếng gạch ở dưới
+            [123, -1, 123, -1],     #Miếng gạch bên trái
+            [123, 123, -1, -1],     #Miếng gạch bên trên
+            [123, 123, 123, 123],   #Full gạch
+            [-1, 234, -1, 234],     #Miếng thép bên phải
+            [-1, -1, 234, 234],     #Miếng thép bên dưới
+            [234, -1, 234, -1],     #Miếng thép bên trái
+            [234, 234, -1, -1],     #miếng thép bên trên
+            [234, 234, 234, 234],   #Full thép
+            [345, 345, 345, 345],   #Full rừng
+            [456, 456, 456, 456],   #Full băng
+            [567, 567, 567, 567],   #Full nước
         ]
+
         self.index = 0
         self.insert_tile = self.inserts[self.index]
         self.icon_image = self.assets.tank_image["Tank_4"]["Gold"]["Up"][0]
         self.icon_rect = self.icon_image.get_rect(topleft=(gc.SCREEN_BORDER_LEFT, gc.SCREEN_BORDER_TOP))
 
     def input(self):
+        #Thoát chết độ edit
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.main.run = False
@@ -50,6 +56,7 @@ class LevelEditor:
                 if event.key == pygame.K_ESCAPE:
                     self.active = False
 
+                # Di chuyển icon
                 if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                     self.icon_rect.x += gc.imageSize
                     if self.icon_rect.x >= gc.SCREEN_BORDER_RIGHT:
@@ -66,13 +73,15 @@ class LevelEditor:
                     self.icon_rect.y -= gc.imageSize
                     if self.icon_rect.y <= gc.SCREEN_BORDER_TOP:
                         self.icon_rect.y = gc.SCREEN_BORDER_TOP
-                #  Cycle through insert pieces
+
+                #  Khi nhấn space sẽ tăng index để duyệt qua các phần tử có trong self.inserts
                 if event.key == pygame.K_SPACE:
                     self.index += 1
                     if self.index >= len(self.inserts):
                         self.index = self.index % len(self.inserts)
                     self.insert_tile = self.inserts[self.index]
-
+                
+                #Lưu map
                 if event.key == pygame.K_RETURN:
                     self.validate_level()
                     self.all_levels.append(self.matrix)
@@ -105,7 +114,6 @@ class LevelEditor:
         pygame.draw.rect(window, gc.GREEN, self.icon_rect, 1)
 
     def draw_screen(self):
-        """Create the game screen"""
         overlay_screen = pygame.Surface((gc.SCREENWIDTH, gc.SCREENHEIGHT))
         overlay_screen.fill(gc.GREY)
         pygame.draw.rect(overlay_screen, gc.BLACK, (gc.GAME_SCREEN))
@@ -132,6 +140,7 @@ class LevelEditor:
             matrix.append(line)
         return matrix
     
+    # Làm trống những ô đc quy địch sẵn
     def validate_level(self):
         for cell in gc.ENEMY_TANK_SPAWNS:
             self.matrix[cell[1]][cell[0]] = -1

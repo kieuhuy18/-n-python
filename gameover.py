@@ -20,12 +20,14 @@ class GameOver:
         self.timer = pygame.time.get_ticks()
 
     def update(self):
+        #Di chuyển chữ game over
         if self.game_over_rect.y > gc.SCREENHEIGHT//4 - self.g_height//2:
             self.game_over_rect.y -= 10
         elif self.game_over_rect.y < gc.SCREENHEIGHT//4 - self.g_height//2:
             self.game_over_rect.y = gc.SCREENHEIGHT//4 - self.g_height//2
             self.timer = pygame.time.get_ticks()
 
+        #Đặt thời gian của game over
         if self.game_over_rect.y == gc.SCREENHEIGHT//4 - self.g_height//2:
             if pygame.time.get_ticks() - self.timer >= 3000:
                 self.active = False

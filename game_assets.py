@@ -20,12 +20,12 @@ class GameAssets:
         #Load spritesheet (ảnh battle_city)
         self.spritesheet = self.load_img("BattleCity")
 
-        #Load ảnh số với màu
+        #Load ảnh số có màu
         self.number_image_black_white = self.load_img("numbers_black_white")
         self.number_image_black_orange = self.load_img("numbers_black_orange")
 
         #Dùng hàm để lấy ra tất cả ảnh tank
-        self.tank_image = self._load_all_tank_images()
+        self.tank_image = self.load_all_tank_images()
 
         # load dict chứa tọa độ của các đối tượng trên spritesheet
         self.bullet_images = self.get_specified_images(self.spritesheet, gc.BULLETS, gc.BLACK)
@@ -37,7 +37,6 @@ class GameAssets:
         self.score = self.get_specified_images(self.spritesheet, gc.SCORE, gc.BLACK)
         self.hud_images = self.get_specified_images(self.spritesheet, gc.HUD_INFO, gc.BLACK, transparent=False)
         self.context = self.get_specified_images(self.spritesheet, gc.CONTEXT, gc.BLACK)
-
         self.brick_tiles = self.get_specified_images(self.spritesheet, gc.MAP_TILES[123], gc.BLACK)
         self.steel_tiles = self.get_specified_images(self.spritesheet, gc.MAP_TILES[234], gc.BLACK)
         self.forest_tiles = self.get_specified_images(self.spritesheet, gc.MAP_TILES[345], gc.BLACK)
@@ -51,6 +50,7 @@ class GameAssets:
         for image in ["hiScore", "arrow", "player1", "player2", "pts", "stage", "total"]:
             self.score_sheet_image[image] = self.load_img(image)
 
+        #Âm thanh cho game
         self.game_start_sound = pygame.mixer.Sound("assets/sound/tet.mp3")
         self.channel_game_start_sound = pygame.mixer.Channel(0)
 
@@ -79,7 +79,7 @@ class GameAssets:
         self.score_sound = pygame.mixer.Sound("assets/sound/score.ogg")
 
     #Hàm lấy ra dictionary gồm tất cả ảnh của tank
-    def _load_all_tank_images(self):
+    def load_all_tank_images(self):
         #Nếu khai báo thủ công thì sẽ có dạng như sau:
         # tank_image_dict ={
         #     "Tank_0":{"Gold":{"Up": [], "Down": [], "Left": [], "Right": []},
@@ -152,11 +152,11 @@ class GameAssets:
     def get_specified_images(self, spritesheet, image_dict, color, transparent = True):
         img_dict = {}
         for key, pos in image_dict.items():
-            img = self._get_images(spritesheet, pos[0], pos[1], pos[2], pos[3], color, transparent)
+            img = self.get_images(spritesheet, pos[0], pos[1], pos[2], pos[3], color, transparent)
             img_dict.setdefault(key, img)
         return img_dict
 
-    def _get_images(self, spritesheet, xpos, ypos, width, height, color, transparent = True):
+    def get_images(self, spritesheet, xpos, ypos, width, height, color, transparent = True):
         surface = pygame.Surface((width, height))
         surface.fill(color)
         surface.blit(spritesheet,(0, 0), (xpos, ypos, width, height))

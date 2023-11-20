@@ -4,9 +4,7 @@ import game_config as gc
 
 class Fade:
     def __init__(self, game, assets, speed=5):
-
         #Class thực thi việc chuyển cảnh, bằng các tạo 2 khối hình chữ nhật ở ngoài screen và đưa nó vào trong màn hình
-
         self.game = game
         self.level = self.game.level_num - 1
         self.assets = assets
@@ -39,7 +37,6 @@ class Fade:
         self.stage_image_rect = self.stage_image.get_rect(center=(gc.SCREENWIDTH//2, gc.SCREENHEIGHT//2))
 
     def update(self):
-
         #Có 3 giai đoạn là đi vào, chờ và đi ra
 
         if not self.fade_active:
