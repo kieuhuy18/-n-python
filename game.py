@@ -38,7 +38,7 @@ class Game:
         self.hud = game_HUD(self, self.assets)
 
         #level
-        self.level_num = 1
+        self.level_num = 6
         self.level_complete = False
         self.level_translation_timer = None
 

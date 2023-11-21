@@ -27,6 +27,8 @@ class Bullet(pygame.sprite.Sprite):
         # thêm đối tượng hiện tại vào gr bullets
         self.bullet.add(self)
 
+        self.shoot_timer = pygame.time.get_ticks()
+
     def move(self):
         speed = gc.TANK_SPEED * 2
         if self.direction == "Up":
@@ -113,6 +115,11 @@ class Bullet(pygame.sprite.Sprite):
                 break
 
     def update(self):
+        if pygame.time.get_ticks() - self.shoot_timer > 1000:
+            self.kill()
+            self.update_owner()
+            return
+
         self.move()
         self.collide_edge_of_screen()
         self.collide_tank()

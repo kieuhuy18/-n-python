@@ -271,6 +271,7 @@ class Tank(pygame.sprite.Sprite):
 
     #  Tank Shooting
     def shoot(self):
+
         if self.spawning:
             return
 
@@ -426,7 +427,7 @@ class EnemyTank(Tank):
 
     def ai_move_direction(self):
         directional_list_copy = self.move_directions.copy()
-        if pygame.time.get_ticks() - self.change_direction_timer <= 250:
+        if pygame.time.get_ticks() - self.change_direction_timer <= 100:
             return
 
         for key, value in self.dir_rec.items():
