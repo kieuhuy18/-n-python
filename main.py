@@ -88,7 +88,7 @@ class MainGame:
 
         #Out ra màn hình khởi đầu khi kết thúc edit
         if self.level_create:
-            if self.level_create.active == False:
+            if self.level_create.active == False: 
                 self.start_screen = StartScreen(self, self.assets)
                 self.start_screen_active = True
                 self.level_editor_on = False

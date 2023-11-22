@@ -211,7 +211,7 @@ class Game:
         self.generate_spawn_queue()
         self.spawn_pos_index = 0
         self.spawn_queue_index = 0
-        print(self.spawn_queue)
+        #print(self.spawn_queue)
 
         # Tạo vị trí xuất hiện của người chơi
         if self.player1_active:
@@ -252,8 +252,8 @@ class Game:
                 else:
                     line.append(f"{tile}")
             self.grid.append(line)
-        for row in self.grid:
-            print(row)
+        # for row in self.grid:
+        #     print(row)
 
     def generate_spawn_queue(self):
         #Tạo hàng chờ với tỷ lệ dựa trên level hiện tại

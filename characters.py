@@ -298,7 +298,6 @@ class Tank(pygame.sprite.Sprite):
         self.paralysis_timer = pygame.time.get_ticks()
 
     def destroy_tank(self):
-        self.tank_health -= 1
         if self.tank_health <= 0:
             self.kill()
             Explosion(self.assets, self.groups, self.rect.center, 5)
@@ -306,12 +305,12 @@ class Tank(pygame.sprite.Sprite):
             self.game.enemies_killed -= 1
             return
 
-        # if self.tank_health == 3:
-        #     self.colour = "Green"
-        # elif self.tank_health == 2:
-        #     self.colour = "Gold"
-        # elif self.tank_health == 1:
-        #     self.colour = "Silver"
+        if self.tank_health == 3:
+            self.colour = "Green"
+        elif self.tank_health == 2:
+            self.colour = "Gold"
+        elif self.tank_health == 1:
+            self.colour = "Silver"
 
 class PlayerTank(Tank):
     def __init__(self, game, assets, groups, position, direction, colour, tank_level):
@@ -472,7 +471,7 @@ class EnemyTank(Tank):
                 self.direction = random.choice(self.move_directions)
             self.change_direction_timer = pygame.time.get_ticks()
 
-        print(directional_list_copy)
+        #print(directional_list_copy)
 
     def update(self):
         super().update()

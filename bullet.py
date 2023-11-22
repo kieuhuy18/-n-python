@@ -76,7 +76,8 @@ class Bullet(pygame.sprite.Sprite):
                 #Bắn trúng địch sẽ tiêu diệt đạn cùng với tank
                 if(self.owner.enemy == False and tank.enemy == True) or (self.owner.enemy == True and tank.enemy == False):
                     self.update_owner()
-                    if not self.owner.enemy:
+                    tank.tank_health -= 1
+                    if not self.owner.enemy and tank.tank_health == 0:
                         self.owner.score_list.append(gc.Tank_Criteria[tank.level]["score"])
                     tank.destroy_tank()
                     Explosion(self.assets, self.group, self.rect.center, 1)
@@ -115,7 +116,7 @@ class Bullet(pygame.sprite.Sprite):
                 break
 
     def update(self):
-        if pygame.time.get_ticks() - self.shoot_timer > 1000:
+        if pygame.time.get_ticks() - self.shoot_timer > 4000:
             self.kill()
             self.update_owner()
             return
