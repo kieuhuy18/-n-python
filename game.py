@@ -191,7 +191,7 @@ class Game:
 
         #  Số lượng kẻ địch, giảm dần khi xe tăng địch xuất hiện
         #self.enemies = random.choice([16, 17, 18, 19, 20])
-        self.enemies = 5
+        self.enemies = 10
 
         #  Số lượng kẽ địch bị tiêu diệt
         self.enemies_killed = self.enemies

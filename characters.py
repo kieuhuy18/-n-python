@@ -136,34 +136,38 @@ class Tank(pygame.sprite.Sprite):
 
         if direction == "Up":
             self.yPos -= self.tank_speed
-            # if not self.enemy:
-            self.xPos = self.grid_alignment_movement(self.xPos)
-            # else: 
-            self.xPos = self.xPos
+            #if not self.enemy:
+            if self.check_tank_collisions() == False:
+                self.xPos = self.grid_alignment_movement(self.xPos)
+            else: 
+                self.xPos = self.xPos
             if self.yPos < gc.SCREEN_BORDER_TOP:
                 self.yPos = gc.SCREEN_BORDER_TOP
         elif direction == "Down":
             self.yPos += self.tank_speed
-            # if not self.enemy:
-            self.xPos = self.grid_alignment_movement(self.xPos)
-            # else: 
-            self.xPos = self.xPos
+            #if not self.enemy:
+            if self.check_tank_collisions() == False:
+                self.xPos = self.grid_alignment_movement(self.xPos)
+            else: 
+                self.xPos = self.xPos
             if self.yPos + self.height > gc.SCREEN_BORDER_BOTTOM:
                 self.yPos = gc.SCREEN_BORDER_BOTTOM - self.height
         elif direction == "Left":
             self.xPos -= self.tank_speed
-            # if not self.enemy:
-            self.yPos = self.grid_alignment_movement(self.yPos)
-            # else: 
-            self.yPos = self.yPos
+            #if not self.enemy:
+            if self.check_tank_collisions() == False:
+                self.yPos = self.grid_alignment_movement(self.yPos)
+            else: 
+                self.yPos = self.yPos
             if self.xPos < gc.SCREEN_BORDER_LEFT:
                 self.xPos = gc.SCREEN_BORDER_LEFT
         elif direction == "Right":
             self.xPos += self.tank_speed
-            # if not self.enemy:
-            self.yPos = self.grid_alignment_movement(self.yPos)
-            # else: 
-            self.yPos = self.yPos
+            #if not self.enemy:
+            if self.check_tank_collisions() == False:
+                self.yPos = self.grid_alignment_movement(self.yPos)
+            else: 
+                self.yPos = self.yPos
             if self.xPos + self.width > gc.SCREEN_BORDER_RIGHT:
                 self.xPos = gc.SCREEN_BORDER_RIGHT - self.width
 
@@ -198,6 +202,12 @@ class Tank(pygame.sprite.Sprite):
             image_to_mask = self.tank_images[f"Tank_{self.tank_level}"][self.colour][direction][0]
             images.setdefault(direction, pygame.mask.from_surface(image_to_mask))
         return images
+
+    def check_tank_collisions(self):
+        tank_collision = pygame.sprite.spritecollide(self, self.tank_group, False)
+        if len(tank_collision) == 1:
+            return False
+        return True
 
     #  Tank Collisions
     def tank_on_tank_collisions(self):
@@ -371,7 +381,6 @@ class PlayerTank(Tank):
         self.tank_group.add(self)
         self.spawning = True
         self.active = False
-        self.shield_start = True
         self.direction = "Up"
         self.xPos, self.yPos = spawn_pos
         self.image = self.tank_images[f"Tank_{self.tank_level}"][self.colour][self.direction][self.frame_index]
@@ -475,5 +484,5 @@ class EnemyTank(Tank):
 
     def draw(self, window):
         super().draw(window)
-        for value in self.dir_rec.values():
-            pygame.draw.rect(window, gc.GREEN, value.rect, 2)
+        # for value in self.dir_rec.values():
+        #     pygame.draw.rect(window, gc.GREEN, value.rect, 2)
