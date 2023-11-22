@@ -1,7 +1,6 @@
 import pygame
 import game_config as gc
 
-
 class TileType(pygame.sprite.Sprite):
     def __init__(self, pos, group, map_tile):
         super().__init__(group)

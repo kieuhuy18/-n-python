@@ -7,7 +7,6 @@ from levels import LevelData
 from startscreen import StartScreen
 
 class MainGame:
-
     #Hàm khởi tạo game
     def __init__(self):
         #Khởi tạo game
@@ -45,12 +44,11 @@ class MainGame:
             self.draw()
  
     def input(self): 
-
-        if self.start_screen_active:
-            self.start_screen_active = self.start_screen.input()
-
         if self.game_on:
             self.game.input()
+            
+        if self.start_screen_active:
+            self.start_screen_active = self.start_screen.input()
 
         if self.level_editor_on:
             self.level_create.input()

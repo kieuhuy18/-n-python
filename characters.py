@@ -136,34 +136,34 @@ class Tank(pygame.sprite.Sprite):
 
         if direction == "Up":
             self.yPos -= self.tank_speed
-            if not self.enemy:
-                self.xPos = self.grid_alignment_movement(self.xPos)
-            else: 
-                self.xPos = self.xPos
+            # if not self.enemy:
+            self.xPos = self.grid_alignment_movement(self.xPos)
+            # else: 
+            self.xPos = self.xPos
             if self.yPos < gc.SCREEN_BORDER_TOP:
                 self.yPos = gc.SCREEN_BORDER_TOP
         elif direction == "Down":
             self.yPos += self.tank_speed
-            if not self.enemy:
-                self.xPos = self.grid_alignment_movement(self.xPos)
-            else: 
-                self.xPos = self.xPos
+            # if not self.enemy:
+            self.xPos = self.grid_alignment_movement(self.xPos)
+            # else: 
+            self.xPos = self.xPos
             if self.yPos + self.height > gc.SCREEN_BORDER_BOTTOM:
                 self.yPos = gc.SCREEN_BORDER_BOTTOM - self.height
         elif direction == "Left":
             self.xPos -= self.tank_speed
-            if not self.enemy:
-                self.yPos = self.grid_alignment_movement(self.yPos)
-            else: 
-                self.yPos = self.yPos
+            # if not self.enemy:
+            self.yPos = self.grid_alignment_movement(self.yPos)
+            # else: 
+            self.yPos = self.yPos
             if self.xPos < gc.SCREEN_BORDER_LEFT:
                 self.xPos = gc.SCREEN_BORDER_LEFT
         elif direction == "Right":
             self.xPos += self.tank_speed
-            if not self.enemy:
-                self.yPos = self.grid_alignment_movement(self.yPos)
-            else: 
-                self.yPos = self.yPos
+            # if not self.enemy:
+            self.yPos = self.grid_alignment_movement(self.yPos)
+            # else: 
+            self.yPos = self.yPos
             if self.xPos + self.width > gc.SCREEN_BORDER_RIGHT:
                 self.xPos = gc.SCREEN_BORDER_RIGHT - self.width
 
@@ -427,7 +427,7 @@ class EnemyTank(Tank):
 
     def ai_move_direction(self):
         directional_list_copy = self.move_directions.copy()
-        if pygame.time.get_ticks() - self.change_direction_timer <= 100:
+        if pygame.time.get_ticks() - self.change_direction_timer <= 750:
             return
 
         for key, value in self.dir_rec.items():
@@ -463,12 +463,14 @@ class EnemyTank(Tank):
                 self.direction = random.choice(self.move_directions)
             self.change_direction_timer = pygame.time.get_ticks()
 
+        print(directional_list_copy)
+
     def update(self):
         super().update()
         if self.spawning:
             return
-        self.ai_move(self.direction)
         self.ai_move_direction()
+        self.ai_move(self.direction)
         self.ai_shooting()
 
     def draw(self, window):
