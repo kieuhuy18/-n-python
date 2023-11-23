@@ -119,7 +119,7 @@ class Tank(pygame.sprite.Sprite):
                 pos -= (pos % (gc.imageSize // 4))
             #Kiểm tra lệch trái
             elif pos % (gc.imageSize // 2) > gc.imageSize // 4:
-                pos += (gc.imageSize//4) - (pos % (gc.imageSize//4))
+                pos += (gc.imageSize//2) - (pos % (gc.imageSize//2))
             else:
                 return pos
         return pos
